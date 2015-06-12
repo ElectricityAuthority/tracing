@@ -2,7 +2,7 @@
 
 This repository contains code to run the power flow tracing routine that is used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM).
 
-Transmission asset usage can be determined using power flow tracing and used in the Market Design of a Transmission Pricing Methodology.  In this case, it is being used in determining those assets that could be considered "deep" connection assets.  I.e., those assets that are shared among only a few participants.
+Transmission asset usage can be determined using power flow tracing.  It is used here as part of the Market Design of a Transmission Pricing Methodology.  In this case, it is being used in determining those assets that could be considered "deeper" connection assets.  I.e., those assets that are shared among only a few participants.
 
 ## Inputs:
 
@@ -14,7 +14,7 @@ In this case the input data is from a Concept Consulting vSPD run and in a sligh
 
 The input data for 3 years of data runs to many GB in size.  It has been split into manageable monthly files which can be downloaded from the EA EMI website.
 
-A sample of the input data can be found within this repository at /data/input along with a fuller description of the input data which also includes a few mapping files required for the tracing routine. 
+A sample of the input data can be found within this repository at /data/input along with a fuller description of the input data which also includes mapping files required for the tracing routine. 
 
 
 ## Outputs
@@ -22,16 +22,16 @@ A sample of the input data can be found within this repository at /data/input al
 Through the use of what Bialek described as the proportional sharing principle, Flow Tracing is able to calculate the share of usage of transmission assets.  It is able to allocate usage in two directions: 
 
   - an "upstream" trace; where transmission asset usage is allocated to grid connected generators, and,
-  - a "downstream" trace which is the exact opposite.  I.e., where transmission asset usage is allocated downstream to demand/load. 
+  - a "downstream" trace; where transmission asset usage is allocated downstream to demand/load. 
   
-As discussed above, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.
+As discussed, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.
 
-Once ./trace.py is run, the output files should appear in the data/output directory.  Although applied at Trading Period level, the output files are saved as the mean over all trading periods during each day.  Daily output files are saved of the following form:
+Once ./trace.py is run, the output files should appear in the data/output directory.  The output files are saved as the mean over all trading periods during each day.  Daily output files are saved of the following form:
 ```
-  - td_YYYYMMDD.csv   "downstream" trace results that allocate transmission circuits and transformers to off-take/demand GXPs.
-  - tu_YYYYMMDD.csv   "upstream" trace that allocate transmission circuits and transformers to generation GIPs.. 
-  - sd_YYYYMMDD.csv   "downstream" trace which allocates substations to off-take/demand GXPs. 
-  - su_YYYYMMDD.csv   "upstream" trace which allocates substations to generation GIPs. 
+  - td_YYYYMMDD.csv   "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
+  - tu_YYYYMMDD.csv   "upstream" results that allocate circuits and transformers to generation GIPs. 
+  - sd_YYYYMMDD.csv   "downstream" results allocating substations to off-take/demand GXPs. 
+  - su_YYYYMMDD.csv   "upstream" results allocating substations to generation GIPs. 
 ```
 
 ## Installation instructions
@@ -42,7 +42,7 @@ To run this code requires an installation of python 2.7 with the python modules 
 The best way to run this code is from within a virtual environment using the virtualenv python package.  This allows the required dependencies in the requirements.txt file to be installed independently from any other python installation on the host machine.  
 
 You can install virtualenv via pip:
-````
+```
 $ pip install virtualenv
 ```
 To clone this repository, open a terminal window and type/paste the following commands;
