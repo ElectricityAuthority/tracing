@@ -134,7 +134,8 @@ def A(b, n, downstream=True):
 
 
 def topo(iA, pi, bd, plg, downstream=True):
-    """Calculate the topological distribution matrices"""
+    """Calculate the topological distribution matrices, this needs a bit of
+       a tidy up"""
     # common to both gross-up and nett-down
     allbus = list(set(bd.index.levels[0]) | set(bd.index.levels[1]))
     totbus = len(allbus)

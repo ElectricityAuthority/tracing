@@ -98,7 +98,7 @@ https://www.ea.govt.nz/dmsdocument/7123
 
 More recently this methodology has been updated (this work), using open source software, and as part of the more recent Transmission Pricing options work currently being conducted by the Market Design team within the Electricity Authority.
 
-For further information on technical aspects of this code, contact:
+For further information, comments, edits, etc, contact:
 
 Contact: emi@ea.govt.nz
 
