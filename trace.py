@@ -1,9 +1,8 @@
 #!/usr/bin/python
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from datetime import datetime
-from scipy.linalg import inv
 import logging as l
 from psutil import phymem_usage
 import os
@@ -72,8 +71,7 @@ def load_vSPD_data(vSPD_b, vSPD_n, mappings=True):
 
 
 def A(b, n, downstream=True):
-    """Given branch flows and load/generation build the A matrix
-        Note: similar to Amatrix.m """
+    """Given branch flows and load/generation build the A matrix and solve."""
     b = b.ix[:, ['FROM_MW', 'TO_MW']]  # grab the columns of interest
     allbus = list(set(b.index.levels[0]) | set(b.index.levels[1]))
     totbus = len(allbus)
@@ -122,7 +120,7 @@ def A(b, n, downstream=True):
             A.ix[i[0], i[1]] = r.values/(PI['Pi+pg'].ix[i[1]])
 
     A = A.replace([np.inf, -np.inf], np.nan).fillna(0.0)
-    iA = inv(A)
+    iA = np.linalg.inv(A)  # invert
     Pi = PI['Pi+pg'].ix[allbus]
     if downstream:  # calculate the nett generation
         pgn = iA.dot(np.array(pl.values))*np.array(pg.values) \
@@ -168,22 +166,19 @@ def topo(iA, pi, bd, plg, downstream=True):
         iAu_df = pd.DataFrame(iA, index=allbus, columns=allbus)
         i_Au_ibus = iAu_df.ix[ibus, :]
         i_Au_jbus = iAu_df.ix[jbus, :]
-        Pgd = [plg.values, ]*len(b_in)
+        Pgd = [plg.values, ] * len(b_in)
         DGilk1 = np.abs(b_inx) * i_Au_ibus.values * Pgd * (1 / pii)
         DGilk2 = np.abs(b_outx) * i_Au_jbus.values * Pgd * (1 / pij)
-        dfg = DGilk1*bposx + DGilk2*bnegx
+        dfg = DGilk1 * bposx + DGilk2 * bnegx
         dfg = pd.DataFrame(dfg, index=bdd.index, columns=allbus).fillna(0.0)
         idx = list(set(dfg.columns) & set(nmap.index))  # filter columns
         df = dfg[idx]
-    # Integerize to save memory requirements
-    # df = df.applymap(lambda x: int(100*x))
     return df
 
 
 def bustocomp(df, nmap, brmap, NPmap, node=False):
     """Given bus level data, group up to either ELB level,
-        when node=False, or node level when node=True and map to branch
-        names"""
+        node=False, or node level, node=True and map to branch names"""
     # Reindex no node labels
     df.index = df.index.map(lambda x: brmap[x])
     df.columns = df.columns.map(lambda x: nmap[x])
@@ -210,9 +205,7 @@ def bustocomp(df, nmap, brmap, NPmap, node=False):
 
 
 def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
-    """Subroutine to calculate transmission usage matrix
-       Note: needs re factoring for better readability/McCabe complexity..."""
-
+    """Subroutine to calculate transmission usage matrix"""
     if downstream:  # Net downstream pg is nett of losses, pl is actual
         Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
         df = topo(iAd, Pi, b, pl, downstream=True)
@@ -223,19 +216,16 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         df = topo(iAu, Pi, b, pg, downstream=False)
         df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
         df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
-
     return df, df1, df2, pl, pg
 
 
 def sub_usage(df, pl, pg, nmap, NPmap):
-    """Subroutine to calculate substation usage matrix
-       As trace is applied at bus level, this groups first to node level, then
-       to substation level
-       Note: MW values are summed at substation level so MW numbers represent
-       the total through flow through all buses that comprise a substation
-       - there can be multiple buses/nodes that make a substation to these flows
-       are not really representative or useful for anything other than
-       calculating usage.  This can be improved."""
+    """Calculate substation usage matrix.  Groups to node level, then substation
+       level.  MW values are summed at substation level so represent total
+       through flow, summed through all buses that comprise a substation.  As a
+       substation consists of multiple buses, the resulting flows are not very
+       representative or useful for anything other than calculating usage.
+       There are likely impoved methods of doing this."""
 
     def submapping(NPmap):
         """Determine the ELB/substation mapping given node/ELB mapping """
@@ -252,7 +242,6 @@ def sub_usage(df, pl, pg, nmap, NPmap):
         bus0 = df.groupby(level=0).sum()/2.0
         bus1 = df.groupby(level=1).sum()/2.0
         bus = bus0.append(bus1).groupby(level=0).sum()
-        # Need to add half the generation and load to their buses...
         idx = np.array(list(set(bus.columns) | set(bus.index)))
         Lx = pd.DataFrame(np.identity(len(idx)), index=idx, columns=idx)
         pl = pl.ix[idx]
@@ -264,7 +253,6 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 
     def bus2node(df, nmap, NPmap):
         """Given bus level data, group up to node level"""
-        # Reindex no node labels
         df.index = df.index.map(lambda x: nmap[x])
         df.columns = df.columns.map(lambda x: nmap[x])
         return df
@@ -288,12 +276,7 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 # Start TRACE
 #
 # Loop through monthly branch and node files, we have to do this because we can
-# not fit all data (3 years worth) into memory all at once.  So we loop over
-# months.  Note: used a cool gawk command line script to split to monthlies...
-#
-# For each monthly data set, we loop over trading periods.  Note: it would be
-# much better suited (cleaner and faster) to use a DataFrame .groupby and .apply
-# methods for this... future todo... for now we loop...
+# not fit all data (3 years worth) into memory all at once.
 #
 # For each TP;
 #   - perform UP stream trace for generation usage of transmission assets
@@ -305,20 +288,22 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 #
 ###############################################################################
 
-# Set input and output paths
+# Setup paths
 path = os.getcwd()
-inpath = path + '/data/input/vSPDout/'
-mappath = path + '/data/input/maps/'
-outpath = path + 'data/output/'
+inpath = os.path.join(path, 'data', 'input', 'vSPDout')
+mappath = os.path.join(path, 'data', 'input', 'maps')
+outpath = os.path.join(path, 'data', 'output')
 
 # Load data mappings
 
-NPmap = pd.read_csv(mappath + '/elb2gxp.csv', index_col=0,
+NPmap = pd.read_csv(os.path.join(mappath, 'elb2gxp.csv'), index_col=0,
                     header=None)[1].to_dict()
-brmap = pd.read_csv(mappath + '/brmap.csv', index_col=[0, 1], header=None)[2]
-nmap = pd.read_csv(mappath + '/busnode.csv', index_col=0, header=None)[1]
-nmap2 = pd.read_csv(mappath + '/busnode2.csv', index_col=0, header=None)[1]
-
+brmap = pd.read_csv(os.path.join(mappath, 'brmap.csv'), index_col=[0, 1],
+                    header=None)[2]
+nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
+                   header=None)[1]
+nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
+                    header=None)[1]
 
 logger.info(20*'*')
 logger.info("Start tracing routine")
@@ -330,8 +315,8 @@ for y in [2011, 2012, 2013]:
     for m in range(1, 13):  # load monthly data
         if (m <= test_limit_max.month) & (m >= test_limit_min.month):
             ym = str(y) + str(m).zfill(2) + '.csv'
-            vSPD_b = inpath + "b_" + ym
-            vSPD_n = inpath + "n_" + ym
+            vSPD_b = os.path.join(inpath, 'b_' + ym)
+            vSPD_n = os.path.join(inpath, 'n_' + ym)
             info_text = 'INPUT: b_' + ym + ', n_' + ym
             logger.info(info_text)
             n, b = load_vSPD_data(vSPD_b, vSPD_n, mappings=False)

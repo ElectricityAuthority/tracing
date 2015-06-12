@@ -62,7 +62,6 @@ Running the trace now would cause errors as the trace.py is dependent on a numbe
 To solve this we install the following packages into the virtual environment by typing:
 ```
 $pip install numpy
-$pip install scipy
 $pip install pandas
 $pip install psutil 
 
@@ -78,7 +77,12 @@ Daily output files will be generated for one month.
 
 Adding Input files from the EMI website into the /data/input/vSPDout directory and editing trace.py (test_limit_min and test_limit_max) should allow the program to run over other time periods. 
 
-## using on vSPD daily output files
+## Post-processing trace data
+
+An iPython notebook file is provided for post-processing.  This file loads each daily file into memory then takes the mean over the three year period and calculates the HHI for each transmission asset.  
+
+
+## Historic tracing of vSPD daily output file
 
 A slightly altered version of this code has been written to take advantage of the daily vSPD output files and this can be used for tracing historic output.  A slight modification to the output is required and for this reason a small gams script is also required to output additional bus/node mapping data.  The EA may also publish this code in the future.
 
@@ -91,13 +95,11 @@ The method has since been applied in NZ by the Electricity Commission in 2010 as
 
 https://www.ea.govt.nz/dmsdocument/7123
 
-More recently this methodology has now been updated, using open source software, as part of the more recent Transmission Pricing options work currently being conducted by the Market Design team within the Electricity Authority.
+More recently this methodology has been updated (this work), using open source software, and as part of the more recent Transmission Pricing options work currently being conducted by the Market Design team within the Electricity Authority.
 
 For further information on technical aspects of this code, contact:
 
-info@ea.govt.nz
-
-
+Contact: emi@ea.govt.nz
 
 
 
