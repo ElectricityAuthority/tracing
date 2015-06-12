@@ -28,10 +28,10 @@ As discussed, this is achieved at both trading period level and at GXP/GIP level
 
 Once ./trace.py is run, the output files should appear in the data/output directory.  The output files are saved as the mean over all trading periods during each day.  Daily output files are saved of the following form:
 ```
-  - td_YYYYMMDD.csv   "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
-  - tu_YYYYMMDD.csv   "upstream" results that allocate circuits and transformers to generation GIPs. 
-  - sd_YYYYMMDD.csv   "downstream" results allocating substations to off-take/demand GXPs. 
-  - su_YYYYMMDD.csv   "upstream" results allocating substations to generation GIPs. 
+- td_YYYYMMDD.csv "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
+- tu_YYYYMMDD.csv "upstream" results that allocate circuits and transformers to generation GIPs. 
+- sd_YYYYMMDD.csv "downstream" results allocating substations to off-take/demand GXPs. 
+- su_YYYYMMDD.csv "upstream" results allocating substations to generation GIPs. 
 ```
 
 ## Installation instructions
@@ -47,30 +47,30 @@ $ pip install virtualenv
 ```
 To clone this repository, open a terminal window and type/paste the following commands;
 ``` 
-$git clone https://electricityauthority/tpm
-$cd tpm
+$ git clone https://electricityauthority/tpm
+$ cd tpm
 ```
 Once the repository has downloaded, we can set up a virtual environment in the local directory called env by typing: 
 ```
-$virtualenv env
+$ virtualenv env
 ```
 We activate the virtual environment, by typing;
 ```
-$source env/bin/activate
+$ source env/bin/activate
 ```
 Running the trace now would cause errors as the trace.py is dependent on a number of other python modules.  
 To solve this we install the following packages into the virtual environment by typing:
 ```
-$pip install numpy
-$pip install pandas
-$pip install psutil 
+$ pip install numpy
+$ pip install pandas
+$ pip install psutil 
 
 ```
 We should now be able to run the trace over the sampled data supplied.
 
 To run the trace, issue the following command:
 ```
-./trace.py
+$ ./trace.py
 ```
 All going well, the trace should start and you should see confirmation in the terminal. 
 Daily output files will be generated for one month. 
@@ -91,7 +91,7 @@ A slightly altered version of this code has been written to take advantage of th
 
 Electricity tracing was formally described by Janusz W. Bialek in his classic 1996 paper titled Tracing the flow of electricity.
 
-The method has since been applied in NZ by the Electricity Commission in 2010 as part of the on-going Transmission Pricing Methodology.  To aid in understanding the methodology, a paper was written at the time and is still available via the EA website at:
+The method has since been applied in NZ by the Electricity Commission in 2010 as part of the on-going Transmission Pricing Methodology.  To aid in understanding the methodology, a paper was written at the time and is available in the docs directory.  It is also still available via the EA website at:
 
 https://www.ea.govt.nz/dmsdocument/7123
 
