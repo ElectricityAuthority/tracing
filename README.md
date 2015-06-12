@@ -2,7 +2,7 @@
 
 This repository contains code to run the power flow tracing routine that is used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM).
 
-Transmission asset usage can be used in the Market Design of a Transmission Pricing Methodology.  In this case, it is being used in determining those assets that could be considered "deep" connection assets.  I.e., those assets that are shared among only a few participants.
+Transmission asset usage can be determined using power flow tracing and used in the Market Design of a Transmission Pricing Methodology.  In this case, it is being used in determining those assets that could be considered "deep" connection assets.  I.e., those assets that are shared among only a few participants.
 
 ## Inputs:
 
@@ -24,15 +24,15 @@ Through the use of what Bialek described as the proportional sharing principle, 
   - an "upstream" trace; where transmission asset usage is allocated to grid connected generators, and,
   - a "downstream" trace which is the exact opposite.  I.e., where transmission asset usage is allocated downstream to demand/load. 
   
-As discussed above, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.  In this instance, this code does this for the downstream trace to local lines company level.
+As discussed above, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.
 
-Once this program is run, the output files should appear in the data/output directory.  Although the trace is applied at a Trading Period level, the output files are saved as the mean all trading periods during each day.  Each day four output files are saved of the following form:
-
+Once ./trace.py is run, the output files should appear in the data/output directory.  Although applied at Trading Period level, the output files are saved as the mean over all trading periods during each day.  Daily output files are saved of the following form:
+```
   - td_YYYYMMDD.csv   "downstream" trace results that allocate transmission circuits and transformers to off-take/demand GXPs.
   - tu_YYYYMMDD.csv   "upstream" trace that allocate transmission circuits and transformers to generation GIPs.. 
   - sd_YYYYMMDD.csv   "downstream" trace which allocates substations to off-take/demand GXPs. 
   - su_YYYYMMDD.csv   "upstream" trace which allocates substations to generation GIPs. 
-
+```
 
 ## Installation instructions
 
