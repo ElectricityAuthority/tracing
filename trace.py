@@ -277,6 +277,11 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 #
 # Loop through monthly branch and node files, we have to do this because we can
 # not fit all data (3 years worth) into memory all at once.
+# months.  Note: used a cool gawk command line script to split to monthlies...
+#
+# For each monthly data set, we loop over trading periods.  Note: it would be
+# much better suited (cleaner and faster) to use a DataFrame .groupby and .apply
+# methods for this... future todo... for now we loop...
 #
 # For each TP;
 #   - perform UP stream trace for generation usage of transmission assets
@@ -362,10 +367,10 @@ for y in [2011, 2012, 2013]:
                             fc[(day, tp)] = 1
                             pass
                     # monthly output filenames
-                    tuc = outpath + 'tu_' + ymd
-                    suc = outpath + 'su_' + ymd
-                    tdc = outpath + 'td_' + ymd
-                    sdc = outpath + 'sd_' + ymd
+                    tuc = os.path.join(outpath, 'tu_' + ymd)
+                    suc = os.path.join(outpath, 'su_' + ymd)
+                    tdc = os.path.join(outpath, 'td_' + ymd)
+                    sdc = os.path.join(outpath, 'sd_' + ymd)
                     # log
                     logger.info(21*'=')
                     logger.info("|OUTPUT: " + tuc + '|')

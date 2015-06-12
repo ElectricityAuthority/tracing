@@ -73,7 +73,7 @@ To run the trace, issue the following command:
 ```
 $ ./trace.py
 ```
-All going well, the trace should start and you should see confirmation in the terminal. 
+All going well, the trace should start and you should see confirmation in the terminal. It should take between 1 and 2 seconds to complete a trace on each trading period.  
 Daily output files will be generated for one month. 
 
 Adding Input files from the EMI website into the /data/input/vSPDout directory and editing trace.py (test_limit_min and test_limit_max) should allow the program to run over other time periods. 
