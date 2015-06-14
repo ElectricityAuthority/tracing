@@ -226,7 +226,8 @@ def sub_usage(df, pl, pg, nmap, NPmap):
        through flow, summed through all buses that comprise a substation.  As a
        substation consists of multiple buses, the resulting flows are not very
        representative or useful for anything other than calculating usage.
-       There are likely impoved methods of doing this."""
+       There are a number of other methods that could be used, i.e, select
+       the highest voltage bus."""
 
     def submapping(NPmap):
         """Determine the ELB/substation mapping given node/ELB mapping """
@@ -380,9 +381,9 @@ for y in [2011, 2012, 2013]:
                     logger.info("|OUTPUT: " + sdc + '|')
                     # spit
                     # dailys to csv
-                    pd.Panel(tu).mean(0).to_csv(tuc)
-                    pd.Panel(su).mean(0).to_csv(suc)
-                    pd.Panel(td).mean(0).to_csv(tdc)
-                    pd.Panel(sd).mean(0).to_csv(sdc)
+                    pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
+                    pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
+                    pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
+                    pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
 
 fc = pd.Series(fc).to_csv(outpath + 'fc.csv')

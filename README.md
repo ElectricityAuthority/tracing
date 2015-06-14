@@ -48,8 +48,8 @@ $ pip install virtualenv
 ```
 To clone this repository, open a terminal window and type/paste the following commands;
 ``` 
-$ git clone https://electricityauthority/tpm
-$ cd tpm
+$ git clone https://github.com/ElectricityAuthority/tracing.git
+$ cd tracing
 ```
 Once the repository has downloaded, we can set up a virtual environment in the local directory called env by typing: 
 ```
