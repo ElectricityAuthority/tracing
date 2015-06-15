@@ -321,6 +321,10 @@ test_limit_max = datetime(2011, 1, 31)
 for y in [2011, 2012, 2013]:
     for m in range(1, 13):  # load monthly data
         if (m <= test_limit_max.month) & (m >= test_limit_min.month):
+            td = {}  # downstream transmission usage
+            sd = {}  # downstream substation usage
+            tu = {}  # upstream transmission usage
+            su = {}  # upstream substation usage
             ym = str(y) + str(m).zfill(2) + '.csv'
             vSPD_b = os.path.join(inpath, 'b_' + ym)
             vSPD_n = os.path.join(inpath, 'n_' + ym)
@@ -329,10 +333,10 @@ for y in [2011, 2012, 2013]:
             n, b = load_vSPD_data(vSPD_b, vSPD_n, mappings=False)
             for day in n.index.levels[0]:
                 """Possible update. Use groupby/apply on pd.Dataframe."""
-                td = {}  # downstream transmission usage
-                sd = {}  # downstream substation usage
-                tu = {}  # upstream transmission usage
-                su = {}  # upstream substation usage
+                #td = {}  # downstream transmission usage
+                #sd = {}  # downstream substation usage
+                #tu = {}  # upstream transmission usage
+                #su = {}  # upstream substation usage
                 ymd = str(y) + str(m).zfill(2) + str(day.day).zfill(2) + '.csv'
                 if (day <= test_limit_max) & (day >= test_limit_min):
                     for tp in n.index.levels[1]:
@@ -368,22 +372,25 @@ for y in [2011, 2012, 2013]:
                             logger.error(traceback.print_exc())
                             fc[(day, tp)] = 1
                             pass
-                    # monthly output filenames
-                    tuc = os.path.join(outpath, 'tu_' + ymd)
-                    suc = os.path.join(outpath, 'su_' + ymd)
-                    tdc = os.path.join(outpath, 'td_' + ymd)
-                    sdc = os.path.join(outpath, 'sd_' + ymd)
-                    # log
-                    logger.info(21*'=')
-                    logger.info("|OUTPUT: " + tuc + '|')
-                    logger.info("|OUTPUT: " + suc + '|')
-                    logger.info("|OUTPUT: " + tdc + '|')
-                    logger.info("|OUTPUT: " + sdc + '|')
-                    # spit
-                    # dailys to csv
-                    pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
-                    pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
-                    pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
-                    pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
+            # monthly output filenames
+            tuc = os.path.join(outpath, 'tu_' + ym)
+            suc = os.path.join(outpath, 'su_' + ym)
+            tdc = os.path.join(outpath, 'td_' + ym)
+            sdc = os.path.join(outpath, 'sd_' + ym)
+            # log
+            logger.info(21*'=')
+            logger.info("|OUTPUT: " + tuc + '|')
+            logger.info("|OUTPUT: " + suc + '|')
+            logger.info("|OUTPUT: " + tdc + '|')
+            logger.info("|OUTPUT: " + sdc + '|')
+            # spit to csv
+            pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
+            pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
+            pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
+            pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
+
+
+
+
 
 fc = pd.Series(fc).to_csv(outpath + 'fc.csv')

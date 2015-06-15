@@ -1,6 +1,6 @@
 # Flow tracing of electricity in New Zealand
 
-This repository contains code to run the power flow tracing routine that is used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM).
+This repository contains code to run the power flow tracing routine that is used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM) as published by the Authority in an options paper on 16 June 2015.
 
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
@@ -20,7 +20,7 @@ A sample of the input data can be found within this repository at /data/input al
 
 ## Outputs
 
-Through the use of what Bialek described as the proportional sharing principle, Flow Tracing is able to calculate the share of usage of transmission assets.  It is able to allocate usage in two directions: 
+Through the use of what Bialek[1] described as the proportional sharing principle, Flow Tracing is able to calculate the share of usage of transmission assets.  It is able to allocate usage in two directions: 
 
   - an "upstream" trace; where transmission asset usage is allocated to grid connected generators, and,
   - a "downstream" trace; where transmission asset usage is allocated downstream to demand/load. 
@@ -80,12 +80,12 @@ Adding Input files from the EMI website into the /data/input/vSPDout directory a
 
 ## Post-processing trace data
 
-An iPython notebook file is provided for post-processing.  This file loads each daily file into memory then takes the mean over the three year period and calculates the HHI for each transmission asset.  
+An iPython notebook file is provided for post-processing.  This file loads each daily file into memory then takes the mean over the three year period and calculates the Herfindahl-Hirschman Index for each transmission asset.  
 
 
 ## Historic tracing of vSPD daily output file
 
-A slightly altered version of this code has been written to take advantage of the daily vSPD output files and this can be used for tracing historic output.  A slight modification to the output is required and for this reason a small gams script is also required to output additional bus/node mapping data.  The EA may also publish this code in the future.
+A slightly altered version of this code has been written to take advantage of the daily vSPD output files and this can be used for tracing historic output.  A slight modification to the output is required and for this reason a small Gams script is also required to output additional bus/node mapping data.  The EA may also publish this code in the future.
 
 
 ## Additional background information
@@ -102,6 +102,5 @@ For further information, comments, edits, etc, contact:
 
 Contact: emi@ea.govt.nz
 
-
-
+[1] J. Bialek, Tracing the flow of electricity, IEE Proc.-Gener. Transm. Distrib., Volume 143, No. 4, Page(s):313–320, July 1996.
 
