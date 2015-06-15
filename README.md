@@ -27,12 +27,12 @@ Through the use of what Bialek[1] described as the proportional sharing principl
   
 As discussed, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.
 
-Once ./trace.py is run, the output files should appear in the data/output directory.  The output files are saved as the mean over all trading periods during each day.  Daily output files are saved of the following form:
+Once ./trace.py is run, the output files should appear in the data/output directory.  The output files are saved as the mean over all trading periods during each month.  Monthly output files are saved of the following form:
 ```
-- td_YYYYMMDD.csv "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
-- tu_YYYYMMDD.csv "upstream" results that allocate circuits and transformers to generation GIPs. 
-- sd_YYYYMMDD.csv "downstream" results allocating substations to off-take/demand GXPs. 
-- su_YYYYMMDD.csv "upstream" results allocating substations to generation GIPs. 
+- td_YYYYMM.csv "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
+- tu_YYYYMM.csv "upstream" results that allocate circuits and transformers to generation GIPs. 
+- sd_YYYYMM.csv "downstream" results allocating substations to off-take/demand GXPs. 
+- su_YYYYMM.csv "upstream" results allocating substations to generation GIPs. 
 ```
 
 ## Installation instructions
@@ -90,7 +90,7 @@ A slightly altered version of this code has been written to take advantage of th
 
 ## Additional background information
 
-Electricity tracing was formally described by Janusz W. Bialek in his classic 1996 paper titled Tracing the flow of electricity.
+Electricity tracing was formally described by Janusz W. Bialek in his classic 1996 paper titled Tracing the flow of electricity [1].
 
 The method has since been applied in NZ by the Electricity Commission in 2010 as part of the on-going Transmission Pricing Methodology.  To aid in understanding the methodology, a paper was written at the time and is available in the docs directory.  It is also still available via the EA website at:
 

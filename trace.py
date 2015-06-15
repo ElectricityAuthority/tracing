@@ -1,4 +1,8 @@
 #!/usr/bin/python
+"""TODO list:
+  - add command line inputs
+  - and options for outputs i.e., ELB/node etc.
+  - general code readability improvements etc"""
 
 import numpy as np
 import pandas as pd
@@ -207,16 +211,21 @@ def bustocomp(df, nmap, brmap, NPmap, node=False):
 
 def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
     """Subroutine to calculate transmission usage matrix"""
-    if downstream:  # Net downstream pg is nett of losses, pl is actual
-        Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
-        df = topo(iAd, Pi, b, pl, downstream=True)
-        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
-    else:  # Gross upstream pg is actual, pl grossed with losses
-        Au, iAu, pg, pl, bdu, cjiu, Pi = A(b, n, downstream=downstream)
-        df = topo(iAu, Pi, b, pg, downstream=False)
-        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+    #if downstream:  # Net downstream pg is nett of losses, pl is actual
+        #Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
+        #df = topo(iAd, Pi, b, pl, downstream=True)
+        #df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
+        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+    #else:  # Gross upstream pg is actual, pl grossed with losses
+        #Au, iAu, pg, pl, bdu, cjiu, Pi = A(b, n, downstream=downstream)
+        #df = topo(iAu, Pi, b, pg, downstream=False)
+        #df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
+        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+    Ac, iAc, pg, pl, bd, cji, Pi = A(b, n, downstream=downstream)
+    df = topo(iAc, Pi, b, pl, downstream=downstream)
+    df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
+    df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+    #return df, df1, df2, pl, pg
     return df, df1, df2, pl, pg
 
 
@@ -319,78 +328,71 @@ fc = {}  # failed counter
 test_limit_min = datetime(2011, 1, 1)
 test_limit_max = datetime(2011, 1, 31)
 for y in [2011, 2012, 2013]:
-    for m in range(1, 13):  # load monthly data
-        if (m <= test_limit_max.month) & (m >= test_limit_min.month):
-            td = {}  # downstream transmission usage
-            sd = {}  # downstream substation usage
-            tu = {}  # upstream transmission usage
-            su = {}  # upstream substation usage
-            ym = str(y) + str(m).zfill(2) + '.csv'
-            vSPD_b = os.path.join(inpath, 'b_' + ym)
-            vSPD_n = os.path.join(inpath, 'n_' + ym)
-            info_text = 'INPUT: b_' + ym + ', n_' + ym
-            logger.info(info_text)
-            n, b = load_vSPD_data(vSPD_b, vSPD_n, mappings=False)
-            for day in n.index.levels[0]:
-                """Possible update. Use groupby/apply on pd.Dataframe."""
-                #td = {}  # downstream transmission usage
-                #sd = {}  # downstream substation usage
-                #tu = {}  # upstream transmission usage
-                #su = {}  # upstream substation usage
-                ymd = str(y) + str(m).zfill(2) + str(day.day).zfill(2) + '.csv'
-                if (day <= test_limit_max) & (day >= test_limit_min):
-                    for tp in n.index.levels[1]:
-                        try:
-                            info_text = "TRACE: " + str(day.date()) + "|TP " + \
-                                        str(int(tp)).zfill(2) + "|Mem=" + \
-                                        str(phymem_usage()[2]) + "%"
-                            logger.info(info_text)
-                            # get TP level data
-                            n2 = n.xs(day, level=0).xs(tp, level=0)\
-                                .reset_index('node', drop=True)
-                            b2 = b.xs(day, level=0).xs(tp, level=0)\
-                                .reset_index('branch', drop=True)
-                            # Perform downstream trace
-                            dfd, dfd1, dfd2, pl, pg = trans_use(b2, n2, nmap2,
-                                                                brmap, NPmap,
-                                                                downstream=True)
-                            dfds, dfds2 = sub_usage(dfd, pl, pg, nmap2, NPmap)
-                            td[str(tp)] = dfd1
-                            sd[str(tp)] = dfds
-                            # Perform upstream trace
-                            dfu, dfu1, dfu2, pl, pg = trans_use(b2, n2, nmap2,
-                                                                brmap, NPmap,
-                                                                downstream=False)
-                            dfus, dfus2 = sub_usage(dfu, pl, pg, nmap2, NPmap)
-                            tu[str(tp)] = dfu1
-                            su[str(tp)] = dfus
-                            fc[tp] = 0
-                        except Exception:
-                            logger.error("***FAILED*** for " + str(day) +
-                                         " trading period " + str(int(tp)) +
-                                         "***")
-                            logger.error(traceback.print_exc())
-                            fc[(day, tp)] = 1
-                            pass
-            # monthly output filenames
-            tuc = os.path.join(outpath, 'tu_' + ym)
-            suc = os.path.join(outpath, 'su_' + ym)
-            tdc = os.path.join(outpath, 'td_' + ym)
-            sdc = os.path.join(outpath, 'sd_' + ym)
-            # log
-            logger.info(21*'=')
-            logger.info("|OUTPUT: " + tuc + '|')
-            logger.info("|OUTPUT: " + suc + '|')
-            logger.info("|OUTPUT: " + tdc + '|')
-            logger.info("|OUTPUT: " + sdc + '|')
-            # spit to csv
-            pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
-            pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
-            pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
-            pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
+    if (y <= test_limit_max.year) & (y >= test_limit_min.year):
+        for m in range(1, 13):  # load monthly data
+            if (m <= test_limit_max.month) & (m >= test_limit_min.month):
+                td = {}  # downstream transmission usage
+                sd = {}  # downstream substation usage
+                tu = {}  # upstream transmission usage
+                su = {}  # upstream substation usage
+                ym = str(y) + str(m).zfill(2) + '.csv'
+                vSPD_b = os.path.join(inpath, 'b_' + ym)
+                vSPD_n = os.path.join(inpath, 'n_' + ym)
+                info_text = 'INPUT: b_' + ym + ', n_' + ym
+                logger.info(info_text)
+                n, b = load_vSPD_data(vSPD_b, vSPD_n, mappings=False)
+                for day in n.index.levels[0]:
+                    """Possible update. Use groupby/apply on pd.Dataframe."""
+                    ymd = str(y) + str(m).zfill(2) + str(day.day).zfill(2) + '.csv'
+                    if (day <= test_limit_max) & (day >= test_limit_min):
+                        for tp in n.index.levels[1]:
+                            try:
+                                info_text = "TRACE: " + str(day.date()) + "|TP " + \
+                                            str(int(tp)).zfill(2) + "|Mem=" + \
+                                            str(phymem_usage()[2]) + "%"
+                                logger.info(info_text)
+                                # get TP level data
+                                n2 = n.xs(day, level=0).xs(tp, level=0)\
+                                    .reset_index('node', drop=True)
+                                b2 = b.xs(day, level=0).xs(tp, level=0)\
+                                    .reset_index('branch', drop=True)
+                                # Perform downstream trace
+                                dfd, dfd1, dfd2, pl, pg = trans_use(b2, n2, nmap2,
+                                                                    brmap, NPmap,
+                                                                    downstream=True)
+                                dfds, dfds2 = sub_usage(dfd, pl, pg, nmap2, NPmap)
+                                td[(day, str(tp))] = dfd1
+                                sd[(day, str(tp))] = dfds
+                                # Perform upstream trace
+                                dfu, dfu1, dfu2, pl, pg = trans_use(b2, n2, nmap2,
+                                                                    brmap, NPmap,
+                                                                    downstream=False)
+                                dfus, dfus2 = sub_usage(dfu, pl, pg, nmap2, NPmap)
+                                tu[(day, str(tp))] = dfu1
+                                su[(day, str(tp))] = dfus
+                                fc[(day, str(tp))] = 0
+                            except Exception:
+                                logger.error("***FAILED*** for " + str(day) +
+                                            " trading period " + str(int(tp)) +
+                                            "***")
+                                logger.error(traceback.print_exc())
+                                fc[(day, str(tp))] = 1
+                                pass
+                # monthly output filenames
+                tuc = os.path.join(outpath, 'tu_' + ym)
+                suc = os.path.join(outpath, 'su_' + ym)
+                tdc = os.path.join(outpath, 'td_' + ym)
+                sdc = os.path.join(outpath, 'sd_' + ym)
+                # log
+                logger.info(21*'=')
+                logger.info("|OUTPUT: " + tuc + '|')
+                logger.info("|OUTPUT: " + suc + '|')
+                logger.info("|OUTPUT: " + tdc + '|')
+                logger.info("|OUTPUT: " + sdc + '|')
+                # spit to csv
+                pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
+                pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
+                pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
+                pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
 
-
-
-
-
-fc = pd.Series(fc).to_csv(outpath + 'fc.csv')
+fc = pd.Series(fc).to_csv(os.path.join(outpath, 'fc.csv'))
