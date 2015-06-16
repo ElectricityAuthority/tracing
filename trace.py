@@ -326,7 +326,7 @@ logger.info("Start tracing routine")
 logger.info(20*'*')
 fc = {}  # failed counter
 test_limit_min = datetime(2011, 1, 1)
-test_limit_max = datetime(2011, 1, 31)
+test_limit_max = datetime(2013, 12, 31)
 for y in [2011, 2012, 2013]:
     if (y <= test_limit_max.year) & (y >= test_limit_min.year):
         for m in range(1, 13):  # load monthly data
@@ -378,21 +378,39 @@ for y in [2011, 2012, 2013]:
                                 logger.error(traceback.print_exc())
                                 fc[(day, str(tp))] = 1
                                 pass
-                # monthly output filenames
+                # average monthly output filenames (as csv)
                 tuc = os.path.join(outpath, 'tu_' + ym)
                 suc = os.path.join(outpath, 'su_' + ym)
                 tdc = os.path.join(outpath, 'td_' + ym)
                 sdc = os.path.join(outpath, 'sd_' + ym)
+                # TP level data monthly output filenames (pickles)
+                tup = os.path.join(outpath, 'tp', 'tu_' + ym[:6] + '.pickle')
+                sup = os.path.join(outpath, 'tp', 'su_' + ym[:6] + '.pickle')
+                tdp = os.path.join(outpath, 'tp', 'td_' + ym[:6] + '.pickle')
+                sdp = os.path.join(outpath, 'tp', 'sd_' + ym[:6] + '.pickle')
+                # panelize, fillna
+                TU = pd.Panel(tu).fillna(0.0)
+                SU = pd.Panel(su).fillna(0.0)
+                TD = pd.Panel(td).fillna(0.0)
+                SD = pd.Panel(sd).fillna(0.0)
+                # output data files
+                TU.to_pickle(tup)
+                SU.to_pickle(sup)
+                TD.to_pickle(tdp)
+                SD.to_pickle(sdp)
+                TU.mean(0).to_csv(tuc, float_format='%.4f')
+                SU.mean(0).to_csv(suc, float_format='%.4f')
+                TD.mean(0).to_csv(tdc, float_format='%.4f')
+                SD.mean(0).to_csv(sdc, float_format='%.4f')
                 # log
                 logger.info(21*'=')
+                logger.info("|OUTPUT: " + tup + '|')
+                logger.info("|OUTPUT: " + sup + '|')
+                logger.info("|OUTPUT: " + tdp + '|')
+                logger.info("|OUTPUT: " + sdp + '|')
                 logger.info("|OUTPUT: " + tuc + '|')
                 logger.info("|OUTPUT: " + suc + '|')
                 logger.info("|OUTPUT: " + tdc + '|')
                 logger.info("|OUTPUT: " + sdc + '|')
-                # spit to csv
-                pd.Panel(tu).mean(0).to_csv(tuc, float_format='%.4f')
-                pd.Panel(su).mean(0).to_csv(suc, float_format='%.4f')
-                pd.Panel(td).mean(0).to_csv(tdc, float_format='%.4f')
-                pd.Panel(sd).mean(0).to_csv(sdc, float_format='%.4f')
 
 fc = pd.Series(fc).to_csv(os.path.join(outpath, 'fc.csv'))
