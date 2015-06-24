@@ -4,6 +4,7 @@ This repository contains code to run the power flow tracing routine that is used
 
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
+**NOTE: this is a live repository and will be updated over the coming weeks with additional code as I make it available.  It is similar, but not the same as, the code based used for the TPM work.  Further improvements are planned in the future (DJH, 24 June, 2015).**
 
 ## Inputs:
 
