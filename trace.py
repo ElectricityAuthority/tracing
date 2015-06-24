@@ -91,121 +91,116 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
             .fillna(0.0)
         if downstream:
             """Build Nett downstream Ad with inflows"""
-            b1 = b.ix[b.FROM_MW<0].FROM_MW  # assume when FROM_MW is neg, flow into bus
-            b2 = b.swaplevel(0,1).sort()     # swap levels and sort
-            b2 = -b2.ix[b2.TO_MW>0].TO_MW   # assume when TO_MW is pos, flow into bus
+            b1 = b.ix[b.FROM_MW < 0].FROM_MW  # FROM_MW is neg, flow into bus
+            b2 = b.swaplevel(0, 1).sort()     # swap levels and sort
+            b2 = -b2.ix[b2.TO_MW > 0].TO_MW   # TO_MW is pos, flow into bus
         else:
             """Build Gross upstream Au with outflows"""
-            b1 = b.ix[b.TO_MW<0].TO_MW  # assume when FROM_MW is neg, flow into bus
-            b2 = b.swaplevel(0,1).sort()     # swap levels and sort
-            b2 = -b2.ix[b2.FROM_MW>0].FROM_MW   # assume when TO_MW is pos, flow into bus
+            b1 = b.ix[b.TO_MW < 0].TO_MW  # FROM_MW is neg, flow into bus
+            b2 = b.swaplevel(0, 1).sort()     # swap levels and sort
+            b2 = -b2.ix[b2.FROM_MW > 0].FROM_MW   # TO_MW is pos, flow into bus
 
-        b2.index.names=['FROM_ID_BUS','TO_ID_BUS']  # rename indices to match flow directions
+        b2.index.names = ['FROM_ID_BUS', 'TO_ID_BUS']  # to match flow dir
         cji = b1.append(b2).sortlevel()  # append and sort
-        cji = cji.groupby(level=[0,1]).sum()  #sum parrallel branches
+        cji = cji.groupby(level=[0, 1]).sum()  # sum parrallel branches
 
-        #calculate Nodal through-flows using inflows
-        inflow1 = -b.ix[b.FROM_MW<0].groupby(level=0).sum().FROM_MW  # select flows out
-        inflow2 = b.ix[b.TO_MW>0].groupby(level=1).sum().TO_MW
-        inflow = pd.DataFrame({'inflow1': inflow1, 'inflow2': inflow2}).fillna(0.0).sum(axis=1)
-        #calculate Nodal through-flows using outflows
-        outflow1 = b.ix[b.FROM_MW>0].groupby(level=0).sum().FROM_MW
-        outflow2 = -b.ix[b.TO_MW<0].groupby(level=1).sum().TO_MW
-        outflow = pd.DataFrame({'outflow1': outflow1, 'outflow2': outflow2}).fillna(0.0).sum(axis=1)
-        Pi = pd.DataFrame({'inflow':inflow, 'outflow':outflow}).fillna(0.0)
-        PI = pd.DataFrame({'Pi+pg': Pi.inflow.add(pg, fill_value=0).fillna(0.0),
-                           'Pi+pl': Pi.outflow.add(pl, fill_value=0).fillna(0.0)})
+        # calculate Nodal through-flows using inflows
+        inflow1 = -b.ix[b.FROM_MW < 0].groupby(level=0).sum().FROM_MW  # out
+        inflow2 = b.ix[b.TO_MW > 0].groupby(level=1).sum().TO_MW
+        inflow = pd.DataFrame({'inflow1': inflow1,
+                               'inflow2': inflow2}).fillna(0.0).sum(axis=1)
+        # calculate Nodal through-flows using outflows
+        outflow1 = b.ix[b.FROM_MW > 0].groupby(level=0).sum().FROM_MW
+        outflow2 = -b.ix[b.TO_MW < 0].groupby(level=1).sum().TO_MW
+        outflow = pd.DataFrame({'outflow1': outflow1,
+                                'outflow2': outflow2}).fillna(0.0).sum(axis=1)
+        Pi = pd.DataFrame({'inflow': inflow, 'outflow': outflow}).fillna(0.0)
+        PI = pd.DataFrame({'Pi+pg': Pi.inflow.add(pg,
+                                                  fill_value=0).fillna(0.0),
+                           'Pi+pl': Pi.outflow.add(pl,
+                                                   fill_value=0).fillna(0.0)})
         if downstream:
             """Build Nett downstream Ad with inflows"""
-            for i, r in pd.DataFrame({'cji':cji}).iterrows():
+            for i, r in pd.DataFrame({'cji': cji}).iterrows():
                 v = r.values/(PI['Pi+pl'].ix[i[0]])
-                #print "Put " + str(v) + " @A" + str(i[1]) + "," + str(i[0]) + "Rvalue=" + \
-                #str(r.values) + " : " + "PIvalue=" + str(PI['Pi+PLi'].ix[i[0]])
-                A.ix[i[1],i[0]] = v
+                A.ix[i[1], i[0]] = v
         else:
             """Build Gross upstream Au with outflows"""
-            for i, r in pd.DataFrame({'cji':cji}).iterrows():
-                A.ix[i[0],i[1]] = r.values/(PI['Pi+pg'].ix[i[1]])
+            for i, r in pd.DataFrame({'cji': cji}).iterrows():
+                A.ix[i[0], i[1]] = r.values/(PI['Pi+pg'].ix[i[1]])
 
         A = A.replace([np.inf, -np.inf], np.nan).fillna(0.0)
         iA = np.linalg.inv(A)  # invert
-        #iA = inv(A)
         Pi = PI['Pi+pg'].ix[allbus]
-        if downstream:  #calculate the nett generation
-            pgn = iA.dot(np.array(pl.values))*np.array(pg.values)*np.array(((1/Pi).fillna(0.0)).values)
-            pg= pd.Series(pgn, index=allbus).fillna(0.0)
+        if downstream:  # calculate the nett generation
+            pgn = iA.dot(np.array(pl.values)) * np.array(pg.values) * \
+                np.array(((1/Pi).fillna(0.0)).values)
+            pg = pd.Series(pgn, index=allbus).fillna(0.0)
         else:  # calculate the gross demand
-            plg = iA.dot(np.array(pg.values))*np.array(pl.values)*np.array(((1/Pi).fillna(0.0)).values)
+            plg = iA.dot(np.array(pg.values)) * np.array(pl.values) * \
+                np.array(((1/Pi).fillna(0.0)).values)
             pl = pd.Series(plg, index=allbus).fillna(0.0)
         return A, iA, pg, pl, b2, cji, Pi
 
     def topo(iA, pi, bd, plg, downstream=True):
         """Calculate the topological distribution matrices"""
-        #common to both gross-up and nett-down
+        # common to both gross-up and nett-down
         allbus = list(set(bd.index.levels[0]) | set(bd.index.levels[1]))
         totbus = len(allbus)
-        bdd = bd.groupby(level=[0,1]).sum().dropna()
-        bpos = bdd.TO_MW>=0  # Masks that depend on flow direction
-        bneg = bdd.TO_MW<0
-        bposx = np.array([bpos.values,] * totbus).transpose()
-        bnegx = np.array([bneg.values,] * totbus).transpose()
+        bdd = bd.groupby(level=[0, 1]).sum().dropna()
+        bpos = bdd.TO_MW >= 0  # Masks that depend on flow direction
+        bneg = bdd.TO_MW < 0
+        bposx = np.array([bpos.values, ] * totbus).transpose()
+        bnegx = np.array([bneg.values, ] * totbus).transpose()
         ibus = bdd.reset_index().TO_ID_BUS.values
         jbus = bdd.reset_index().FROM_ID_BUS.values
-        pii = np.array([pi.ix[ibus].values,] * totbus).transpose()
-        pij = np.array([pi.ix[jbus].values,] * totbus).transpose()
+        pii = np.array([pi.ix[ibus].values, ] * totbus).transpose()
+        pij = np.array([pi.ix[jbus].values, ] * totbus).transpose()
         b_in = bdd.TO_MW.values
         b_out = bdd.FROM_MW.values
-        b_inx = np.array([b_in,]*totbus).transpose()
-        b_outx = np.array([b_out,]*totbus).transpose()
-        if downstream:  #Calculate nett branch flows for downstream to demand
+        b_inx = np.array([b_in, ] * totbus).transpose()
+        b_outx = np.array([b_out, ] * totbus).transpose()
+        if downstream:  # calculate nett branch flows for downstream to demand
             iAd_df = pd.DataFrame(iA, index=allbus, columns=allbus)
-            i_Ad_ibus = iAd_df.ix[ibus,:]
-            i_Ad_jbus = iAd_df.ix[jbus,:]
-            b_in_n = np.abs(b_in) * i_Ad_jbus.values.dot(pl.values)*(1/pi.ix[jbus].values)
-            b_out_n = np.abs(b_out) * i_Ad_ibus.values.dot(pl.values)*(1/pi.ix[ibus].values)
-            bn = b_in_n*bneg.values + b_out_n*bpos.values
-            bnx = np.array([bn,]*totbus).transpose()
-            Pdd = [plg.values,]*len(b_in)
-            DDilk1 = np.abs(b_inx) * i_Ad_jbus.values * Pdd  * (1/pij)
-            DDilk2 = np.abs(b_outx) * i_Ad_ibus.values * Pdd * (1/pii)
-            dfd = DDilk1*bnegx + DDilk2*bposx
-            dfd = pd.DataFrame(dfd, index = bdd.index, columns=allbus).fillna(0.0)
-            idx = list(set(dfd.columns) & set(nmap.index))  # filter those columns in nmap
+            i_Ad_ibus = iAd_df.ix[ibus, :]
+            i_Ad_jbus = iAd_df.ix[jbus, :]
+            Pdd = [plg.values, ] * len(b_in)
+            DDilk1 = np.abs(b_inx) * i_Ad_jbus.values * Pdd * (1 / pij)
+            DDilk2 = np.abs(b_outx) * i_Ad_ibus.values * Pdd * (1 / pii)
+            dfd = DDilk1 * bnegx + DDilk2 * bposx
+            dfd = pd.DataFrame(dfd, index=bdd.index,
+                               columns=allbus).fillna(0.0)
+            idx = list(set(dfd.columns) & set(nmap.index))  # filter
             df = dfd[idx]
-        else:  #Calculate gross branch flows for upstream to generators
+        else:  # calculate gross branch flows for upstream to generators
             iAu_df = pd.DataFrame(iA, index=allbus, columns=allbus)
-            i_Au_ibus = iAu_df.ix[ibus,:]
-            i_Au_jbus = iAu_df.ix[jbus,:]
-            b_in_g = np.abs(b_in) * i_Au_ibus.values.dot(pg.values)*(1/pi.ix[ibus].values)
-            b_out_g = np.abs(b_out) * i_Au_jbus.values.dot(pg.values)*(1/pi.ix[jbus].values)
-            bg = b_in_g*bpos.values + b_out_g*bneg.values
-            bgx = np.array([bg,]*totbus).transpose()
-            Pgd = [plg.values,]*len(b_in)
-            DGilk1 = np.abs(b_inx) * i_Au_ibus.values * Pgd  * (1/pii)
-            DGilk2 = np.abs(b_outx) * i_Au_jbus.values * Pgd * (1/pij)
-            dfg = DGilk1*bposx + DGilk2*bnegx
-            dfg = pd.DataFrame(dfg, index = bdd.index, columns=allbus).fillna(0.0)
-            idx = list(set(dfg.columns) & set(nmap.index))  # filter those columns in nmap
+            i_Au_ibus = iAu_df.ix[ibus, : ]
+            i_Au_jbus = iAu_df.ix[jbus, : ]
+            Pgd = [plg.values, ] * len(b_in)
+            DGilk1 = np.abs(b_inx) * i_Au_ibus.values * Pgd * (1 / pii)
+            DGilk2 = np.abs(b_outx) * i_Au_jbus.values * Pgd * (1 / pij)
+            dfg = DGilk1 * bposx + DGilk2 * bnegx
+            dfg = pd.DataFrame(dfg, index=bdd.index,
+                               columns=allbus).fillna(0.0)
+            idx = list(set(dfg.columns) & set(nmap.index))  # filter
             df = dfg[idx]
-        #Integerize to save memory requirements
-        #df = df.applymap(lambda x: int(100*x))
         return df
-
-#    def XXbustonodeXX(df, nmap, brmap):
-#        """Given bus level data, group up to node level and map to branch names"""
 
     def bustocomp(df, nmap, brmap, NPmap, node=False):
         """Given bus level data, group up to either ELB level,
-           when node=False, or node level when node=True and map to branch names"""
-        #Reindex no node labels
+           when node=False, or node level when node=True and map
+           to branch names"""
+        # reindex no node labels
         df.index = df.index.map(lambda x: brmap[x])
         df.columns = df.columns.map(lambda x: nmap[x])
-        #select rows and columns that sum to greater than 0
-        df = df.ix[df.sum(axis=1)>0,df.sum()>0]
-        #Sum columns to the node label level
+        # select rows and columns that sum to greater than 0
+        df = df.ix[df.sum(axis=1) > 0, df.sum() > 0]
+        # sum columns to the node label level
         df = df.groupby(level=0, axis=1, sort=False).sum()
+
         def seriestolist(x):
-            """We get pd.Series opjects when mapping to branch name level, objects from series to array types"""
+            """We get pd.Series opjects when mapping to branch name level,
+               objects from series to array types"""
             if isinstance(x, type(pd.Series())):
                 idx = x.values
                 return ', '.join(str(e) for e in idx)
@@ -214,21 +209,21 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         df.index = df.index.map(lambda x: seriestolist(x))
         if node:
             return df
-        else:  #Sum by ELB
+        else:  # sum by ELB
             df.columns = df.columns.map(lambda x: NPmap[x[0:7]])
             df = df.groupby(level=0, axis=1, sort=False).sum()
             return df
 
-    if downstream:  #Net downstream pg is nett of losses, pl is actual
-        Ad, iAd, pg, pl, bdd, cjid, Pi  = A(b, n, downstream=downstream)
+    if downstream:  # net downstream pg is nett of losses, pl is actual
+        Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
         df = topo(iAd, Pi, b, pl, downstream=True)
-        df1  = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2  = bustocomp(df.copy(), nmap, brmap, NPmap)  #ELB level
-    else:  #Gross upstream pg is actual, pl grossed with losses
+        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
+        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+    else:  # gross upstream pg is actual, pl grossed with losses
         Au, iAu, pg, pl, bdu, cjiu, Pi = A(b, n, downstream=downstream)
         df = topo(iAu, Pi, b, pg, downstream=False)
-        df1  = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2  = bustocomp(df.copy(), nmap, brmap, NPmap)  #ELB level
+        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
+        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
 
     return df, df1, df2, pl, pg
 
