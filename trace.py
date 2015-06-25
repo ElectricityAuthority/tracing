@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """TODO list:
-  - fix GXP mapping issue for generation output matrices!
+  - fixed? GXP mapping issue for generation output matrices!
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
   - add output directory creation on first run!
