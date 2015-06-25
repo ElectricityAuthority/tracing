@@ -127,7 +127,8 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         else:
             """Build Gross upstream Au with outflows"""
             for i, r in pd.DataFrame({'cji': cji}).iterrows():
-                A.ix[i[0], i[1]] = r.values/(PI['Pi+pg'].ix[i[1]])
+                v = r.values/(PI['Pi+pg'].ix[i[1]])
+                A.ix[i[0], i[1]] = v
 
         A = A.replace([np.inf, -np.inf], np.nan).fillna(0.0)
         iA = np.linalg.inv(A)  # invert
@@ -218,14 +219,15 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
         df = topo(iAd, Pi, b, pl, downstream=True)
         df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
     else:  # gross upstream pg is actual, pl grossed with losses
         Au, iAu, pg, pl, bdu, cjiu, Pi = A(b, n, downstream=downstream)
         df = topo(iAu, Pi, b, pg, downstream=False)
         df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
 
-    return df, df1, df2, pl, pg
+    #return df, df1, df2, pl, pg
+    return df, df1, pl, pg
 
 
 def sub_usage(df, pl, pg, nmap, NPmap):
@@ -277,9 +279,9 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 
     b_usage = bus_trace_usage(df, pl, pg, nmap)
     n_usage = bus2node(b_usage, nmap)
-    s_usage = node2sub(n_usage, NPmap)
+    #s_usage = node2sub(n_usage, NPmap)
 
-    return n_usage, s_usage
+    return n_usage#, s_usage
 
 
 ###############################################################################
@@ -324,10 +326,11 @@ logger.info(20*'*')
 logger.info("Start tracing routine")
 logger.info(20*'*')
 fc = {}  # failed counter
+TP = False
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
 test_limit_min = datetime(2011, 1, 1)
-test_limit_max = datetime(2011, 1, 2)
+test_limit_max = datetime(2013, 12, 31)
 for y in [2011, 2012, 2013]:
     if (y <= test_limit_max.year) & (y >= test_limit_min.year):
         for m in range(1, 13):  # load monthly data
@@ -358,17 +361,17 @@ for y in [2011, 2012, 2013]:
                                 b2 = b.xs(day, level=0).xs(tp, level=0)\
                                     .reset_index('branch', drop=True)
                                 # Perform downstream trace
-                                dfd, dfd1, dfd2, pl, pg = trans_use(b2, n2, nmap2,
-                                                                    brmap, NPmap,
-                                                                    downstream=True)
-                                dfds, dfds2 = sub_usage(dfd, pl, pg, nmap2, NPmap)
+                                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap2,
+                                                              brmap, NPmap,
+                                                              downstream=True)
+                                dfds = sub_usage(dfd, pl, pg, nmap2, NPmap)
                                 td[(str(tp))] = dfd1
                                 sd[(str(tp))] = dfds
                                 # Perform upstream trace
-                                dfu, dfu1, dfu2, pl, pg = trans_use(b2, n2, nmap2,
-                                                                    brmap, NPmap,
-                                                                    downstream=False)
-                                dfus, dfus2 = sub_usage(dfu, pl, pg, nmap2, NPmap)
+                                dfu, dfu1, pl, pg = trans_use(b2, n2, nmap2,
+                                                              brmap, NPmap,
+                                                              downstream=False)
+                                dfus = sub_usage(dfu, pl, pg, nmap2, NPmap)
                                 tu[(str(tp))] = dfu1
                                 su[(str(tp))] = dfus
                                 fc[(day, str(tp))] = 0
@@ -396,10 +399,11 @@ for y in [2011, 2012, 2013]:
                         TD = pd.Panel(td).fillna(0.0)
                         SD = pd.Panel(sd).fillna(0.0)
                         # output data files
-                        TU.to_pickle(tup)
-                        SU.to_pickle(sup)
-                        TD.to_pickle(tdp)
-                        SD.to_pickle(sdp)
+                        if TP:
+                            TU.to_pickle(tup)
+                            SU.to_pickle(sup)
+                            TD.to_pickle(tdp)
+                            SD.to_pickle(sdp)
                         TU.mean(0).to_csv(tuc, float_format='%.4f')
                         SU.mean(0).to_csv(suc, float_format='%.4f')
                         TD.mean(0).to_csv(tdc, float_format='%.4f')
