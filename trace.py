@@ -3,7 +3,6 @@
   - fixed? GXP mapping issue for generation output matrices!
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
-  - add output directory creation on first run!
   - general code readability improvements etc"""
 
 import numpy as np
@@ -305,11 +304,23 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 #
 ###############################################################################
 
-# Setup paths
+# Setup paths and create output directory structure if required.
 path = os.getcwd()
 inpath = os.path.join(path, 'data', 'input', 'vSPDout')
 mappath = os.path.join(path, 'data', 'input', 'maps')
 outpath = os.path.join(path, 'data', 'output')
+
+
+def create_dir(dirpath):
+    if not os.path.exists(dirpath):
+        os.makedirs(dirpath)
+
+create_dir(outpath)
+create_dir(os.path.join(outpath, 'tp'))  # trading period
+create_dir(os.path.join(outpath, 'd'))  # daily mean
+create_dir(os.path.join(outpath, 'm'))  # monthly mean
+create_dir(os.path.join(outpath, 'y'))  # annual mean
+create_dir(os.path.join(outpath, 't'))  # total mean
 
 # Load data mappings
 
@@ -325,6 +336,10 @@ nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
 logger.info(20*'*')
 logger.info("Start tracing routine")
 logger.info(20*'*')
+
+
+
+
 fc = {}  # failed counter
 TP = False
 # The test limits and if statements below don't work as intended - needs

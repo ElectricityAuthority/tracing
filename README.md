@@ -14,7 +14,9 @@ These inputs are the outputs of a solved SPD or vSPD market model.  So the traci
 
 In this case the input data is from a Concept Consulting vSPD run and in a slightly altered format to the output data found from a generic vSPD run.  
 
-The input data for 3 years of data runs to many GB in size.  It has been split into manageable monthly files which can be downloaded from the EA EMI website.
+The input data for 3 years of data runs to many GB in size.  It has been split into manageable monthly files which can be downloaded from the EA EMI website at:
+
+http://bit.ly/1eTEd9o
 
 A sample of the input data can be found within this repository at /data/input along with a fuller description of the input data which also includes mapping files required for the tracing routine. 
 
@@ -28,13 +30,34 @@ Through the use of what Bialek[1] described as the proportional sharing principl
   
 As discussed, this is achieved at both trading period level and at GXP/GIP level.  It is a simple matter to then group and sum this GXP/GIP level data to a participant level.
 
-Once ./trace.py is run, the output files should appear in the data/output directory.  The output files are saved as the mean over all trading periods during each month.  Monthly output files are saved of the following form:
+Once ./trace.py is run, the output files should (as of 29/6/2015) appear in the data/output directory.  If this directory does not exist it should appear with the following sub-directories.
+```
+data/output/tp  # trading period mean
+data/output/d  # daily mean
+data/output/m  # monthly mean
+data/output/y  # annual mean
+data/output/t  # total mean
+```
+
+The output files are saved as the mean over all trading periods during each month.  Monthly output files are saved of the following form:
 ```
 - td_YYYYMM.csv "downstream" results that allocate circuits and transformers to off-take/demand GXPs.
 - tu_YYYYMM.csv "upstream" results that allocate circuits and transformers to generation GIPs. 
 - sd_YYYYMM.csv "downstream" results allocating substations to off-take/demand GXPs. 
 - su_YYYYMM.csv "upstream" results allocating substations to generation GIPs. 
 ```
+
+## Post-processing trace output data
+
+The following iPython notebook files are provided for post-processing.
+```
+trace_post_processing_1.ipynb  
+trace_post_processing_2.ipynb
+```
+The first file returns the mean of the daily data over months, years and the total three year period.
+
+The second file (not yet published) calculates and adds the Herfindahl-Hirschman Index (HHI) and Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.
+
 
 ## Installation instructions
 
@@ -79,9 +102,6 @@ Daily output files will be generated for one month.
 
 Adding Input files from the EMI website into the /data/input/vSPDout directory and editing trace.py (test_limit_min and test_limit_max) should allow the program to run over other time periods. 
 
-## Post-processing trace data
-
-An iPython notebook file is provided for post-processing.  This file loads each daily file into memory then takes the mean over the three year period and calculates the Herfindahl-Hirschman Index for each transmission asset.  
 
 
 ## Historic tracing of vSPD daily output file
