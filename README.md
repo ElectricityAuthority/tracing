@@ -51,12 +51,18 @@ The output files are saved as the mean over all trading periods during each mont
 
 The following iPython notebook files are provided for post-processing.
 ```
-trace_post_processing_1.ipynb  
+trace_post_processing_1.ipynb 
+trace_post_processing_1.py 
+trace_post_processing_hvdc.ipynb 
 trace_post_processing_2.ipynb
 ```
-The first file returns the mean of the daily data over months, years and the total three year period.
+trace_post_processing_1.ipynb returns the mean of the daily data over months, years and the total three year period and adds the Herfindahl-Hirschman Index (HHI).
 
-The second file (not yet published) calculates and adds the Herfindahl-Hirschman Index (HHI) and Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.
+trace_post_processing_1.py is a modified native python version based on this code but altered by Concept Consulting to better tie into their TPM work.  This also includes four new mapping files.
+
+trace_post_processing_hvdc.ipynb is an attempt to look at the HVDC.  The HVDC is unique and is modelled in vSPD as four circuits, two north and two south.  Because of this, ideally these circuits need to be combined into one and the HHI calculated for the HVDC as per any other AC circuits.  We have not done this so these results are representative. 
+
+trace_post_processing_2.ipynb (not yet published) adds Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.
 
 
 ## Installation instructions
