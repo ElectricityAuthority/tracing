@@ -1,10 +1,8 @@
-#!/usr/bin/python
-"""This is a python script version of the iPython notebook - not tested
-30/6/2015 DJH"""
-
 import pandas as pd
 import os, glob
 import numpy as np
+
+#os.chdir("C:\\TPM\\Deeper connection\\Programs")
 
 daily_input_path = os.path.join('data', 'output', 'd')
 monthly_output_path = os.path.join('data', 'output', 'm')
@@ -65,14 +63,14 @@ for trace_type in ['td', 'tu', 'sd', 'su']:
     print "Returning mean for " + trace_type + ': to ' + output_filename
     mean_results(annual_output_path, trace_type=trace_type).to_csv(output_filename)
 
-# load the total trace matrices over the tree years
+# load the total trace matrices over the three years
 
 td = pd.read_csv(os.path.join(total_output_path, 'td.csv'), index_col=0)
 tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
 sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
 su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
 
-# groupby ELB company for downstream matrices and GIP for generation
+# group by ELB company for downstream matrices and GIP for generation
 
 # load the GXP to Line company mapping and export to dictionary
 elb2gxp = pd.read_csv(os.path.join(map_path, 'elb2gxp.csv'), index_col=0, header=None)[1].to_dict()
@@ -116,3 +114,41 @@ tu.to_csv(os.path.join(total_output_path, 'tu_hhi.csv'))
 sd.to_csv(os.path.join(total_output_path, 'sd_hhi.csv'))
 su.to_csv(os.path.join(total_output_path, 'su_hhi.csv'))
 
+# reload the total trace matrices over the three years
+
+td = pd.read_csv(os.path.join(total_output_path, 'td.csv'), index_col=0)
+tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
+sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
+su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
+
+# load the row and column mappings and export to dictionary
+roll_up_nodes_for_generation_trace = pd.read_csv(os.path.join(map_path, 'roll_up_nodes_for_generation_trace.csv'), index_col=0, header=None)[1].to_dict()
+roll_up_nodes_for_load_trace = pd.read_csv(os.path.join(map_path, 'roll_up_nodes_for_load_trace.csv'), index_col=0, header=None)[1].to_dict()
+roll_up_transmission_assets_for_generation_trace = pd.read_csv(os.path.join(map_path, 'roll_up_transmission_assets_for_generation_trace.csv'), index_col=0, header=None)[1].to_dict()
+roll_up_transmission_assets_for_load_trace = pd.read_csv(os.path.join(map_path, 'roll_up_transmission_assets_for_load_trace.csv'), index_col=0, header=None)[1].to_dict()
+
+sd.index = sd.index.map(lambda x: roll_up_transmission_assets_for_load_trace.get(x,None))
+sd = sd.groupby(level=0, axis=0, sort=False).sum()
+sd.columns = sd.columns.map(lambda x: roll_up_nodes_for_load_trace.get(x,None))
+sd = sd.groupby(level=0, axis=1, sort=False).sum()
+
+su.index = su.index.map(lambda x: roll_up_transmission_assets_for_generation_trace.get(x,None))
+su = su.groupby(level=0, axis=0, sort=False).sum()
+su.columns = su.columns.map(lambda x: roll_up_nodes_for_generation_trace.get(x,None))
+su = su.groupby(level=0, axis=1, sort=False).sum()
+
+td.index = td.index.map(lambda x: roll_up_transmission_assets_for_load_trace.get(x,None))
+td = td.groupby(level=0, axis=0, sort=False).sum()
+td.columns = td.columns.map(lambda x: roll_up_nodes_for_load_trace.get(x,None))
+td = td.groupby(level=0, axis=1, sort=False).sum()
+
+tu.index = tu.index.map(lambda x: roll_up_transmission_assets_for_generation_trace.get(x,None))
+tu = tu.groupby(level=0, axis=0, sort=False).sum()
+tu.columns = tu.columns.map(lambda x: roll_up_nodes_for_generation_trace.get(x,None))
+tu = tu.groupby(level=0, axis=1, sort=False).sum()
+
+# save to csv
+td.to_csv(os.path.join(total_output_path, 'td_for_spreadsheet.csv'))
+tu.to_csv(os.path.join(total_output_path, 'tu_for_spreadsheet.csv'))
+sd.to_csv(os.path.join(total_output_path, 'sd_for_spreadsheet.csv'))
+su.to_csv(os.path.join(total_output_path, 'su_for_spreadsheet.csv'))
