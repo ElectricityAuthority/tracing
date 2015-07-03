@@ -1,61 +1,77 @@
-import pandas as pd
-import os, glob
-import numpy as np
+#!/usr/bin/python
+"""This file takes the daily trace data and combines it into monthly, annual and
+   total over the time period.  It also removes additional data from the
+   substation arrays, with suitable mappings and outputs data n a form for
+   further TPM design/analysis."""
 
-#os.chdir("C:\\TPM\\Deeper connection\\Programs")
+import pandas as pd
+import os
+import glob
+import numpy as np
 
 daily_input_path = os.path.join('data', 'output', 'd')
 monthly_output_path = os.path.join('data', 'output', 'm')
 annual_output_path = os.path.join('data', 'output', 'y')
 total_output_path = os.path.join('data', 'output', 't')
-map_path =  os.path.join('data', 'input', 'maps')
+map_path = os.path.join('data', 'input', 'maps')
 
-# define function that returns the mean dataframe from a panel of all given dateframes
+# define function that returns the mean dataframe from panel of all dateframes
+
 
 def mean_results(input_path, year, month, trace_type='td'):
     """Function to return mean results over the month"""
     P = {}
-    files = glob.glob(os.path.join(daily_input_path, trace_type + '_' + str(year) + str(month).zfill(2) + '*.csv'))
+    files = glob.glob(os.path.join(daily_input_path, trace_type + '_' +
+                                   str(year) + str(month).zfill(2) + '*.csv'))
     for i, f in enumerate(files):
-        #print i, f
-        P[i] = pd.read_csv(f, index_col = 0)
-    return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)  # take mean over the panel making sure to fill NaNs with zero!
+        P[i] = pd.read_csv(f, index_col=0)
+    return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)  # remember NaNs 2 0!
 
-# loop over daily trace results and save monthly mean results to m dir- this works but is very slow!
+# loop over daily results, save monthly means to m dir- this is slow...!
 
 for trace_type in ['td', 'tu', 'sd', 'su']:
-    for YYYY in range(2011,2014):
-        for MM in range(1,13):
-            output_filename = os.path.join(monthly_output_path, trace_type + '_' + str(YYYY) + str(MM).zfill(2) + '.csv')
-            print "Returning mean for " + trace_type + ': ' + str(YYYY) + "/" + str(MM).zfill(2) + ' to ' + output_filename
-            mean_results(daily_input_path, YYYY, MM, trace_type=trace_type).to_csv(output_filename)
+    for YYYY in range(2011, 2014):
+        for MM in range(1, 13):
+            output_filename = os.path.join(monthly_output_path, trace_type + '_'
+                                           + str(YYYY) + str(MM).zfill(2) + '.csv')
+            print "Returning mean for " + trace_type + ': ' + str(YYYY) + "/" \
+            + str(MM).zfill(2) + ' to ' + output_filename
+            mean_results(daily_input_path, YYYY, MM,
+                         trace_type=trace_type).to_csv(output_filename)
 
 # combine monthlies into annuals and save to csv in y dir
-# define function that returns the mean dataframe from a panel of all given dateframes
+# define function that returns the mean dataframe from a panel of all given
+# dateframes
+
+
 def mean_results(input_path, year, trace_type='td'):
     """Function to return mean results over the month"""
     P = {}
     files = glob.glob(os.path.join(input_path, trace_type + '_' + str(year) + '*.csv'))
     for i, f in enumerate(files):
-        #print i, f
-        P[i] = pd.read_csv(f, index_col = 0)
+        # print i, f
+        P[i] = pd.read_csv(f, index_col=0)
     return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)
 
 for trace_type in ['td', 'tu', 'sd', 'su']:
-    for YYYY in range(2011,2014):
-        output_filename = os.path.join(annual_output_path, trace_type + '_' + str(YYYY) + '.csv')
-        print "Returning mean for " + trace_type + ': ' + str(YYYY) + ' to ' + output_filename
-        mean_results(monthly_output_path, YYYY, trace_type=trace_type).to_csv(output_filename)
+    for YYYY in range(2011, 2014):
+        output_filename = os.path.join(annual_output_path, trace_type + '_' +
+                                       str(YYYY) + '.csv')
+        print "Returning mean for " + trace_type + ': ' + str(YYYY) + ' to ' + \
+            output_filename
+        mean_results(monthly_output_path, YYYY, trace_type=trace_type) \
+            .to_csv(output_filename)
 
 # combine annuals into total for 3 years and save to csv in t dir
+
 
 def mean_results(input_path, trace_type='td'):
     """Function to return mean results over the month"""
     P = {}
     files = glob.glob(os.path.join(input_path, trace_type + '*.csv'))
     for i, f in enumerate(files):
-        #print i, f
-        P[i] = pd.read_csv(f, index_col = 0)
+        # print i, f
+        P[i] = pd.read_csv(f, index_col=0)
     return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)
 
 for trace_type in ['td', 'tu', 'sd', 'su']:
@@ -70,21 +86,66 @@ tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
 sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
 su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
 
-# group by ELB company for downstream matrices and GIP for generation
+# load the row and column mappings and export to dictionary
 
+nodes_gen = pd.read_csv(os.path.join(map_path, 'nodes_gen.csv'), index_col=0,
+                        header=None)[1].to_dict()
+nodes_load = pd.read_csv(os.path.join(map_path, 'nodes_load.csv'), index_col=0,
+                         header=None)[1].to_dict()
+trans_gen = pd.read_csv(os.path.join(map_path, 'trans_gen.csv'), index_col=0,
+                        header=None)[1].to_dict()
+trans_load = pd.read_csv(os.path.join(map_path, 'trans_load.csv'), index_col=0,
+                         header=None)[1].to_dict()
+
+
+def rollup(df, trans, nodes):
+    """rollup output data with above mappings"""
+    df.index = df.index.map(lambda x: trans.get(x, None))
+    df = df.groupby(level=0, axis=0, sort=False).sum()
+    df.columns = df.columns.map(lambda x: nodes.get(x, None))
+    return df.groupby(level=0, axis=1, sort=False).sum()
+
+sd = rollup(sd, trans_load, nodes_load)
+su = rollup(su, trans_gen, nodes_gen)
+td = rollup(td, trans_load, nodes_load)
+tu = rollup(tu, trans_gen, nodes_gen)
+
+# su.index = su.index.map(lambda x: trans_gen.get(x, None))
+# su = su.groupby(level=0, axis=0, sort=False).sum()
+# su.columns = su.columns.map(lambda x: nodes_gen.get(x, None))
+# su = su.groupby(level=0, axis=1, sort=False).sum()
+
+# td.index = td.index.map(lambda x: trans_load.get(x, None))
+# td = td.groupby(level=0, axis=0, sort=False).sum()
+# td.columns = td.columns.map(lambda x: nodes_load.get(x, None))
+# td = td.groupby(level=0, axis=1, sort=False).sum()
+
+# tu.index = tu.index.map(lambda x: trans_gen.get(x, None))
+# tu = tu.groupby(level=0, axis=0, sort=False).sum()
+# tu.columns = tu.columns.map(lambda x: nodes_gen.get(x, None))
+# tu = tu.groupby(level=0, axis=1, sort=False).sum()
+
+# save to csv
+td.to_csv(os.path.join(total_output_path, 'td_spreadsheet.csv'))
+tu.to_csv(os.path.join(total_output_path, 'tu_spreadsheet.csv'))
+sd.to_csv(os.path.join(total_output_path, 'sd_spreadsheet.csv'))
+su.to_csv(os.path.join(total_output_path, 'su_spreadsheet.csv'))
+
+# group by ELB company for downstream matrices and GIP for generation
 # load the GXP to Line company mapping and export to dictionary
-elb2gxp = pd.read_csv(os.path.join(map_path, 'elb2gxp.csv'), index_col=0, header=None)[1].to_dict()
+elb2gxp = pd.read_csv(os.path.join(map_path, 'elb2gxp.csv'), index_col=0,
+                      header=None)[1].to_dict()
 
 # sum downstream GXPs by line company
 td.columns = td.columns.map(lambda x: elb2gxp[x[0:7]])
 td = td.groupby(level=0, axis=1, sort=False).sum()
 
-# substation.
+# substation
 sd = sd.ix[sd.sum(axis=1) > 0, sd.sum() > 0]  # only if there are flows
 sd.columns = sd.columns.map(lambda x: elb2gxp[x[0:7]])
 sd = sd.groupby(level=0, axis=1, sort=False).sum()
 
-# Ditto for upstream by generator
+# ditto for upstream by generator
 tu.columns = tu.columns.map(lambda x: elb2gxp[x[0:7]])
 tu = tu.groupby(level=0, axis=1, sort=False).sum()
 
@@ -98,8 +159,10 @@ su = su.groupby(su.index.map(lambda x: x[0:3]), sort=False).sum()
 
 # add HHI columns to each trace output matrix
 
+
 def hhi(dfrow):
-    '''HHI calculator, use with apply etc, eg., df.apply(lambda x: hhi(x),axis=1)'''
+    '''HHI calculator, use with apply etc, eg.,
+       df.apply(lambda x: hhi(x),axis=1)'''
     row = [float(ihhi) for ihhi in dfrow]
     return np.sum(((row/np.sum(row))**2))*10000
 
@@ -115,40 +178,8 @@ sd.to_csv(os.path.join(total_output_path, 'sd_hhi.csv'))
 su.to_csv(os.path.join(total_output_path, 'su_hhi.csv'))
 
 # reload the total trace matrices over the three years
-
 td = pd.read_csv(os.path.join(total_output_path, 'td.csv'), index_col=0)
 tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
 sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
 su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
 
-# load the row and column mappings and export to dictionary
-roll_up_nodes_for_generation_trace = pd.read_csv(os.path.join(map_path, 'roll_up_nodes_for_generation_trace.csv'), index_col=0, header=None)[1].to_dict()
-roll_up_nodes_for_load_trace = pd.read_csv(os.path.join(map_path, 'roll_up_nodes_for_load_trace.csv'), index_col=0, header=None)[1].to_dict()
-roll_up_transmission_assets_for_generation_trace = pd.read_csv(os.path.join(map_path, 'roll_up_transmission_assets_for_generation_trace.csv'), index_col=0, header=None)[1].to_dict()
-roll_up_transmission_assets_for_load_trace = pd.read_csv(os.path.join(map_path, 'roll_up_transmission_assets_for_load_trace.csv'), index_col=0, header=None)[1].to_dict()
-
-sd.index = sd.index.map(lambda x: roll_up_transmission_assets_for_load_trace.get(x,None))
-sd = sd.groupby(level=0, axis=0, sort=False).sum()
-sd.columns = sd.columns.map(lambda x: roll_up_nodes_for_load_trace.get(x,None))
-sd = sd.groupby(level=0, axis=1, sort=False).sum()
-
-su.index = su.index.map(lambda x: roll_up_transmission_assets_for_generation_trace.get(x,None))
-su = su.groupby(level=0, axis=0, sort=False).sum()
-su.columns = su.columns.map(lambda x: roll_up_nodes_for_generation_trace.get(x,None))
-su = su.groupby(level=0, axis=1, sort=False).sum()
-
-td.index = td.index.map(lambda x: roll_up_transmission_assets_for_load_trace.get(x,None))
-td = td.groupby(level=0, axis=0, sort=False).sum()
-td.columns = td.columns.map(lambda x: roll_up_nodes_for_load_trace.get(x,None))
-td = td.groupby(level=0, axis=1, sort=False).sum()
-
-tu.index = tu.index.map(lambda x: roll_up_transmission_assets_for_generation_trace.get(x,None))
-tu = tu.groupby(level=0, axis=0, sort=False).sum()
-tu.columns = tu.columns.map(lambda x: roll_up_nodes_for_generation_trace.get(x,None))
-tu = tu.groupby(level=0, axis=1, sort=False).sum()
-
-# save to csv
-td.to_csv(os.path.join(total_output_path, 'td_for_spreadsheet.csv'))
-tu.to_csv(os.path.join(total_output_path, 'tu_for_spreadsheet.csv'))
-sd.to_csv(os.path.join(total_output_path, 'sd_for_spreadsheet.csv'))
-su.to_csv(os.path.join(total_output_path, 'su_for_spreadsheet.csv'))

@@ -49,20 +49,17 @@ The output files are saved as the mean over all trading periods during each mont
 
 ## Post-processing trace output data
 
-The following iPython notebook files are provided for post-processing.
+The following python and iPython notebook files are provided for post-processing.
 ```
-trace_post_processing_1.ipynb 
 trace_post_processing_1.py 
-trace_post_processing_hvdc.ipynb 
+trace_post_processing_hvdc.ipynb  
 trace_post_processing_2.ipynb
 ```
-trace_post_processing_1.ipynb returns the mean of the daily data over months, years and the total three year period and adds the Herfindahl-Hirschman Index (HHI).
+trace_post_processing_1.py returns the mean of the daily data over months, years and the total three year period and adds the Herfindahl-Hirschman Index (HHI).  It also strips additional data from the raw trace output for the substation trace results (this probably should have been part of trace.py...)
 
-trace_post_processing_1.py is a modified native python version based on this code but altered by Concept Consulting to better tie into their TPM work.  This also includes four new mapping files.
+trace_post_processing_hvdc.ipynb is an attempt to look at the HVDC.  The HVDC is unique and is modelled in vSPD as four circuits, two northward flowing and two southward flowing.   Because of this, ideally these circuits need to be combined into one and the HHI calculated for the HVDC as per any other AC circuit.  We have not done this so these results are representative and the HVDC is *not* intended to be traced as a deep connection asset. 
 
-trace_post_processing_hvdc.ipynb is an attempt to look at the HVDC.  The HVDC is unique and is modelled in vSPD as four circuits, two north and two south.  Because of this, ideally these circuits need to be combined into one and the HHI calculated for the HVDC as per any other AC circuits.  We have not done this so these results are representative. 
-
-trace_post_processing_2.ipynb (not yet published) adds Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.
+trace_post_processing_2.ipynb (not yet published) adds Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.  
 
 
 ## Installation instructions
