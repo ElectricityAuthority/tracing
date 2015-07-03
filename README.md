@@ -4,7 +4,8 @@ This repository contains code to run the power flow tracing routine that is used
 
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
-**NOTE: this is a live repository and will be updated over the coming weeks with additional code as I make it available.  It is similar, but not the same as, the code based used for the TPM work.  Further improvements are planned in the future (DJH, 24 June, 2015).**
+**NOTE: this is a live repository and will be updated over the coming weeks with additional code as I make it available.  It is similar, but not the same as, the code based used for the TPM work.  Further improvements are planned in the future (DJH, 3 July, 2015)
+Have made changes to the post processing, process - see below- still waiting for OK on RAB file publish.**
 
 ## Inputs:
 
@@ -55,11 +56,11 @@ trace_post_processing_1.py
 trace_post_processing_hvdc.ipynb  
 trace_post_processing_2.ipynb
 ```
-trace_post_processing_1.py returns the mean of the daily data over months, years and the total three year period and adds the Herfindahl-Hirschman Index (HHI).  It also strips additional data from the raw trace output for the substation trace results (this probably should have been part of trace.py...)
+trace_post_processing_1.py returns the mean of the daily data over months, years and the total three year period and adds the Herfindahl-Hirschman Index (HHI).  It also strips additional data from the raw trace output for the substation trace results (some of this should probably should have been part of trace.py...)
 
 trace_post_processing_hvdc.ipynb is an attempt to look at the HVDC.  The HVDC is unique and is modelled in vSPD as four circuits, two northward flowing and two southward flowing.   Because of this, ideally these circuits need to be combined into one and the HHI calculated for the HVDC as per any other AC circuit.  We have not done this so these results are representative and the HVDC is *not* intended to be traced as a deep connection asset. 
 
-trace_post_processing_2.ipynb (not yet published) adds Transpowers Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs.  
+trace_post_processing_2.ipynb (initial version published) adds Transpower's Regulated Asset Base (RAB) for interconnection assets to each of the four total output csvs - waiting for confirmation on publishing the RAB data.  This is currently in iPyhton notebook format.  
 
 
 ## Installation instructions
