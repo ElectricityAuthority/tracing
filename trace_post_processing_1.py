@@ -37,7 +37,7 @@ for trace_type in ['td', 'tu', 'sd', 'su']:
             print "Returning mean for " + trace_type + ': ' + str(YYYY) + "/" \
             + str(MM).zfill(2) + ' to ' + output_filename
             mean_results(daily_input_path, YYYY, MM,
-                         trace_type=trace_type).to_csv(output_filename)
+                         trace_type=trace_type).to_csv(output_filename, float_format='%.4f')
 
 # combine monthlies into annuals and save to csv in y dir
 # define function that returns the mean dataframe from a panel of all given
@@ -60,7 +60,7 @@ for trace_type in ['td', 'tu', 'sd', 'su']:
         print "Returning mean for " + trace_type + ': ' + str(YYYY) + ' to ' + \
             output_filename
         mean_results(monthly_output_path, YYYY, trace_type=trace_type) \
-            .to_csv(output_filename)
+            .to_csv(output_filename, float_format='%.4f')
 
 # combine annuals into total for 3 years and save to csv in t dir
 
@@ -77,7 +77,7 @@ def mean_results(input_path, trace_type='td'):
 for trace_type in ['td', 'tu', 'sd', 'su']:
     output_filename = os.path.join(total_output_path, trace_type + '.csv')
     print "Returning mean for " + trace_type + ': to ' + output_filename
-    mean_results(annual_output_path, trace_type=trace_type).to_csv(output_filename)
+    mean_results(annual_output_path, trace_type=trace_type).to_csv(output_filename, float_format='%.4f')
 
 # load the total trace matrices over the three years
 
@@ -126,10 +126,10 @@ tu = rollup(tu, trans_gen, nodes_gen)
 # tu = tu.groupby(level=0, axis=1, sort=False).sum()
 
 # save to csv
-td.to_csv(os.path.join(total_output_path, 'td_spreadsheet.csv'))
-tu.to_csv(os.path.join(total_output_path, 'tu_spreadsheet.csv'))
-sd.to_csv(os.path.join(total_output_path, 'sd_spreadsheet.csv'))
-su.to_csv(os.path.join(total_output_path, 'su_spreadsheet.csv'))
+td.to_csv(os.path.join(total_output_path, 'td_spreadsheet.csv'), float_format='%.4f')
+tu.to_csv(os.path.join(total_output_path, 'tu_spreadsheet.csv'), float_format='%.4f')
+sd.to_csv(os.path.join(total_output_path, 'sd_spreadsheet.csv'), float_format='%.4f')
+su.to_csv(os.path.join(total_output_path, 'su_spreadsheet.csv'), float_format='%.4f')
 
 # group by ELB company for downstream matrices and GIP for generation
 # load the GXP to Line company mapping and export to dictionary
@@ -172,14 +172,14 @@ sd['HHI'] = sd.apply(lambda x: hhi(x), axis=1)
 su['HHI'] = su.apply(lambda x: hhi(x), axis=1)
 
 # save to csv
-td.to_csv(os.path.join(total_output_path, 'td_hhi.csv'))
-tu.to_csv(os.path.join(total_output_path, 'tu_hhi.csv'))
-sd.to_csv(os.path.join(total_output_path, 'sd_hhi.csv'))
-su.to_csv(os.path.join(total_output_path, 'su_hhi.csv'))
+td.to_csv(os.path.join(total_output_path, 'td_hhi.csv'), float_format='%.4f')
+tu.to_csv(os.path.join(total_output_path, 'tu_hhi.csv'), float_format='%.4f')
+sd.to_csv(os.path.join(total_output_path, 'sd_hhi.csv'), float_format='%.4f')
+su.to_csv(os.path.join(total_output_path, 'su_hhi.csv'), float_format='%.4f')
 
 # reload the total trace matrices over the three years
-td = pd.read_csv(os.path.join(total_output_path, 'td.csv'), index_col=0)
-tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
-sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
-su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
+# td = pd.read_csv(os.path.join(total_output_path, 'td.csv'), index_col=0)
+# tu = pd.read_csv(os.path.join(total_output_path, 'tu.csv'), index_col=0)
+# sd = pd.read_csv(os.path.join(total_output_path, 'sd.csv'), index_col=0)
+# su = pd.read_csv(os.path.join(total_output_path, 'su.csv'), index_col=0)
 
