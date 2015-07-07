@@ -13,7 +13,7 @@ import logging as l
 from psutil import phymem_usage
 import os
 import traceback
-import pdb
+# import pdb
 
 # Setup some console logging
 formatter = l.Formatter('|%(asctime)-6s|%(message)s|', '%Y-%m-%d %H:%M:%S')
@@ -233,16 +233,6 @@ def sub_usage(df, pl, pg, nmap, NPmap):
        There are a number of other methods that could be used, i.e, select
        the highest voltage bus."""
 
-    #def submapping(NPmap):
-        #"""Determine the ELB/substation mapping given node/ELB mapping """
-        #submap = pd.DataFrame({'comp': NPmap})
-        #submap.index = submap.index.map(lambda x: x[0:3])
-        #submap = submap.reset_index().drop_duplicates()\
-                       #.set_index('index').comp.to_dict()
-        #submapex = {'RPO': 'GENE'}
-        #submap = dict(submap.items() + submapex.items())
-        #return submap
-
     def bus_trace_usage(df, pl, pg, nmap):
         """Determine bus usage using traced MW from branch dfd"""
         bus0 = df.groupby(level=0).sum()/2.0
@@ -273,7 +263,6 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 
     b_usage = bus_trace_usage(df, pl, pg, nmap)
     n_usage = bus2node(b_usage, nmap)
-    #s_usage = node2sub(n_usage, NPmap)
 
     return n_usage#, s_usage
 
