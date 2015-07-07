@@ -1,11 +1,7 @@
 #!/usr/bin/python
 """TODO list:
-  - A few issues with the trace have been identified
-  - there was an error in calculating the topological distribution matrices for the upstream trace.
-  - this should now be fixed.
-  - However, losses have not been properly modelled - this is second order but should be corrected.
   - the handling of negative load - ie, wind generation.
-  - need to set up a few simplified test cases.
+  - need to set up a few more simplified test cases.
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
   - general code readability improvements etc"""
@@ -57,7 +53,6 @@ def load_vSPD_data(vSPD_b, vSPD_n):
                     parse_dates=True)
     b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: bmmap(x))
     b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: bmmap(x))
-    # Further munging
     n = n.set_index(['tp', 'node', 'bus'], append=True)
     n['LOAD'] = n.allofact * (n.LOAD + n.bidMW)
     n['GENERATION'] = n.allofact * n.GENERATION
@@ -65,7 +60,7 @@ def load_vSPD_data(vSPD_b, vSPD_n):
     # add/subtract dynamic loss
     # flow > 0 flow "from bus"->"to bus": "from bus"=flow; "to bus"=flow-loss
     # flow < 0 flow "to bus"->"from bus": "to bus"=flow; "from bus"=flow+loss
-    pdb.set_trace()
+    #pdb.set_trace()
     bpos = b.copy().ix[b.FROM_MW>=0.0]
     bneg = b.copy().ix[b.FROM_MW<0.0]
     bpos['TO_MW'] = bpos['FROM_MW'] - bpos['DynamicLoss (MW)']
@@ -74,7 +69,6 @@ def load_vSPD_data(vSPD_b, vSPD_n):
     b = bneg.append(bpos)
     b = b.set_index(['tp', 'branch', 'FROM_ID_BUS', 'TO_ID_BUS'], append=True)
     b = b.sort_index().ix[:, ['FROM_MW', 'TO_MW']]
-    # pdb.set_trace()
     return n, b
 
 
@@ -308,7 +302,7 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 # Setup paths and create output directory structure if required.
 path = os.getcwd()
 
-test_data = 'data'
+test_data = 'testB'
 inpath = os.path.join(path, test_data, 'input', 'vSPDout')
 mappath = os.path.join(path, test_data, 'input', 'maps')
 outpath = os.path.join(path, test_data, 'output')
@@ -353,8 +347,8 @@ for y in [2011, 2012, 2013]:
     if (y <= test_limit_max.year) & (y >= test_limit_min.year):
         for m in range(1, 13):  # load monthly data
             if (m <= test_limit_max.month) & (m >= test_limit_min.month):
-                #td = {}  # downstream transmission usage
-                #sd = {}  # downstream substation usage
+                td = {}  # downstream transmission usage
+                sd = {}  # downstream substation usage
                 tu = {}  # upstream transmission usage
                 su = {}  # upstream substation usage
                 ym = str(y) + str(m).zfill(2) + '.csv'
@@ -363,7 +357,7 @@ for y in [2011, 2012, 2013]:
                 info_text = 'INPUT: b_' + ym + ', n_' + ym
                 logger.info(info_text)
                 n, b = load_vSPD_data(vSPD_b, vSPD_n)
-                pdb.set_trace()
+                #pdb.set_trace()
 
                 for day in n.index.levels[0]:
                     """Possible update. Use groupby/apply on pd.Dataframe."""
@@ -381,12 +375,12 @@ for y in [2011, 2012, 2013]:
                                 b2 = b.xs(day, level=0).xs(tp, level=0)\
                                     .reset_index('branch', drop=True)
                                 # Perform downstream trace
-                                #dfd, dfd1, pl, pg = trans_use(b2, n2, nmap2,
-                                                              #brmap, NPmap,
-                                                              #downstream=True)
-                                #dfds = sub_usage(dfd, pl, pg, nmap2, NPmap)
-                                #td[(str(tp))] = dfd1
-                                #sd[(str(tp))] = dfds
+                                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap2,
+                                                              brmap, NPmap,
+                                                              downstream=True)
+                                dfds = sub_usage(dfd, pl, pg, nmap2, NPmap)
+                                td[(str(tp))] = dfd1
+                                sd[(str(tp))] = dfds
                                 # Perform upstream trace
                                 dfu, dfu1, pl, pg = trans_use(b2, n2, nmap2,
                                                               brmap, NPmap,
@@ -406,37 +400,37 @@ for y in [2011, 2012, 2013]:
                         # functionize this...
                         tuc = os.path.join(outpath, 'd', 'tu_' + ymd)
                         suc = os.path.join(outpath, 'd', 'su_' + ymd)
-                        #tdc = os.path.join(outpath, 'd', 'td_' + ymd)
-                        #sdc = os.path.join(outpath, 'd', 'sd_' + ymd)
+                        tdc = os.path.join(outpath, 'd', 'td_' + ymd)
+                        sdc = os.path.join(outpath, 'd', 'sd_' + ymd)
                         # TP level data daily output filenames (pickles)
                         tup = os.path.join(outpath, 'tp', 'tu_' + ymd[:8] + '.pickle')
                         sup = os.path.join(outpath, 'tp', 'su_' + ymd[:8] + '.pickle')
-                        #tdp = os.path.join(outpath, 'tp', 'td_' + ymd[:8] + '.pickle')
-                        #sdp = os.path.join(outpath, 'tp', 'sd_' + ymd[:8] + '.pickle')
+                        tdp = os.path.join(outpath, 'tp', 'td_' + ymd[:8] + '.pickle')
+                        sdp = os.path.join(outpath, 'tp', 'sd_' + ymd[:8] + '.pickle')
                         # panelize, fillna
                         TU = pd.Panel(tu).fillna(0.0)
                         SU = pd.Panel(su).fillna(0.0)
-                        #TD = pd.Panel(td).fillna(0.0)
-                        #SD = pd.Panel(sd).fillna(0.0)
+                        TD = pd.Panel(td).fillna(0.0)
+                        SD = pd.Panel(sd).fillna(0.0)
                         # output data files
                         if TP:
                             TU.to_pickle(tup)
                             SU.to_pickle(sup)
-                            #TD.to_pickle(tdp)
-                            #SD.to_pickle(sdp)
+                            TD.to_pickle(tdp)
+                            SD.to_pickle(sdp)
                         TU.mean(0).to_csv(tuc, float_format='%.4f')
                         SU.mean(0).to_csv(suc, float_format='%.4f')
-                        #TD.mean(0).to_csv(tdc, float_format='%.4f')
-                        #SD.mean(0).to_csv(sdc, float_format='%.4f')
+                        TD.mean(0).to_csv(tdc, float_format='%.4f')
+                        SD.mean(0).to_csv(sdc, float_format='%.4f')
                         # log
                         logger.info(21*'=')
                         logger.info("|OUTPUT: " + tup + '|')
                         logger.info("|OUTPUT: " + sup + '|')
-                        #logger.info("|OUTPUT: " + tdp + '|')
-                        #logger.info("|OUTPUT: " + sdp + '|')
+                        logger.info("|OUTPUT: " + tdp + '|')
+                        logger.info("|OUTPUT: " + sdp + '|')
                         logger.info("|OUTPUT: " + tuc + '|')
                         logger.info("|OUTPUT: " + suc + '|')
-                        #logger.info("|OUTPUT: " + tdc + '|')
-                        #logger.info("|OUTPUT: " + sdc + '|')
+                        logger.info("|OUTPUT: " + tdc + '|')
+                        logger.info("|OUTPUT: " + sdc + '|')
 
 fc = pd.Series(fc).to_csv(os.path.join(outpath, 'fc.csv'))
