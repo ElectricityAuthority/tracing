@@ -1,7 +1,8 @@
 #!/usr/bin/python
 """TODO list:
   - the handling of negative load - ie, wind generation.
-  - need to set up a few more simplified test cases.
+  - check loss handling
+  - improve substation calcs?
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
   - general code readability improvements etc"""
