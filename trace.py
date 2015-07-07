@@ -17,7 +17,7 @@ import logging as l
 from psutil import phymem_usage
 import os
 import traceback
-
+import pdb
 
 # Setup some console logging
 formatter = l.Formatter('|%(asctime)-6s|%(message)s|', '%Y-%m-%d %H:%M:%S')
@@ -29,7 +29,7 @@ logger = l.getLogger('TRACE')
 logger.setLevel(l.INFO)
 
 
-def load_vSPD_data(vSPD_b, vSPD_n, mappings=True):
+def load_vSPD_data(vSPD_b, vSPD_n):
     """Function that loads vSPD data"""
     def bmmap(x):
         """Extra nodes inserted by Concept"""
@@ -57,36 +57,25 @@ def load_vSPD_data(vSPD_b, vSPD_n, mappings=True):
                     parse_dates=True)
     b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: bmmap(x))
     b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: bmmap(x))
-    if mappings:
-        # Get some mappings
-        nmap = n.ix[:, ['node', 'bus']].reset_index(drop=True)\
-                .drop_duplicates().set_index(['bus']).sort_index().node
-        nmap2 = nmap.groupby(level=0).first()
-        brmap = b.ix[:, ['branch', 'FROM_ID_BUS', 'TO_ID_BUS']]\
-                .reset_index(drop=True).drop_duplicates()\
-                .set_index(['FROM_ID_BUS', 'TO_ID_BUS'])['branch']
     # Further munging
     n = n.set_index(['tp', 'node', 'bus'], append=True)
     n['LOAD'] = n.allofact * (n.LOAD + n.bidMW)
     n['GENERATION'] = n.allofact * n.GENERATION
     n = n.drop(['allofact', 'bidMW'], axis=1)
     # add/subtract dynamic loss
-    #if flow > 0 then flow in direction: "from bus" --> "to bus":
-    #Flow out of "from bus" = flow
-    #Flow into "to bus" = flow-loss
-
-    #if flow < 0 then flow in direction: "to bus" --> "from bus":
-    #Flow out of "to bus" = flow
-    #Flow into "from bus" = flow+loss
-    b
-    b['TO_MW'] = b['FROM_MW'] - b['DynamicLoss (MW)']
+    # flow > 0 flow "from bus"->"to bus": "from bus"=flow; "to bus"=flow-loss
+    # flow < 0 flow "to bus"->"from bus": "to bus"=flow; "from bus"=flow+loss
+    pdb.set_trace()
+    bpos = b.copy().ix[b.FROM_MW>=0.0]
+    bneg = b.copy().ix[b.FROM_MW<0.0]
+    bpos['TO_MW'] = bpos['FROM_MW'] - bpos['DynamicLoss (MW)']
+    bneg['TO_MW'] = bneg['FROM_MW']
+    bneg['FROM_MW'] = bneg['FROM_MW'] + bneg['DynamicLoss (MW)']
+    b = bneg.append(bpos)
     b = b.set_index(['tp', 'branch', 'FROM_ID_BUS', 'TO_ID_BUS'], append=True)
-    b = b.ix[:, ['FROM_MW', 'TO_MW']]
-
-    if mappings:
-        return n, b, nmap, nmap2, brmap
-    else:
-        return n, b
+    b = b.sort_index().ix[:, ['FROM_MW', 'TO_MW']]
+    # pdb.set_trace()
+    return n, b
 
 
 def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
@@ -373,7 +362,9 @@ for y in [2011, 2012, 2013]:
                 vSPD_n = os.path.join(inpath, 'n_' + ym)
                 info_text = 'INPUT: b_' + ym + ', n_' + ym
                 logger.info(info_text)
-                n, b = load_vSPD_data(vSPD_b, vSPD_n, mappings=False)
+                n, b = load_vSPD_data(vSPD_b, vSPD_n)
+                pdb.set_trace()
+
                 for day in n.index.levels[0]:
                     """Possible update. Use groupby/apply on pd.Dataframe."""
                     ymd = str(y) + str(m).zfill(2) + str(day.day).zfill(2) + '.csv'
