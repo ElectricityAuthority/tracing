@@ -232,7 +232,13 @@ def sub_usage(df, pl, pg, nmap, NPmap):
        substation consists of multiple buses, the resulting flows are not very
        representative or useful for anything other than calculating usage.
        There are a number of other methods that could be used, i.e, select
-       the highest voltage bus."""
+       the highest voltage bus.
+       OR,
+       (9/7/2015) use the td/tu arrays taking mean flows into and out of each
+       substation.  This could be a better solution and potentially be
+       implemented with a regular expression matching in a post process step to
+       determine the circuits attached to each substation (DJH).
+       """
 
     def bus_trace_usage(df, pl, pg, nmap):
         """Determine bus usage using traced MW from branch dfd"""
