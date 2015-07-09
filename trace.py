@@ -1,8 +1,9 @@
 #!/usr/bin/python
 """TODO list:
-  - the handling of negative load - ie, wind generation.
-  - check loss handling
+  - loss handling checks out OK in tests
+  - added negative load to generation column - currently testing.
   - improve substation calcs?
+  - add generation-load calcs - would help checking of code
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
   - general code readability improvements etc"""
@@ -58,12 +59,24 @@ def load_vSPD_data(vSPD_b, vSPD_n):
     n['LOAD'] = n.allofact * (n.LOAD + n.bidMW)
     n['GENERATION'] = n.allofact * n.GENERATION
     n = n.drop(['allofact', 'bidMW'], axis=1)
+
+    def swaperator(x):
+        """If load is negative put in generation column and vice-versa - slow!"""
+        if x.LOAD < 0.0:
+            x["GENERATION"] = -x["LOAD"]
+            x["LOAD"] = 0.0
+        if x["GENERATION"] < 0.0:
+            x["LOAD"] = -x["GENERATION"]
+            x["GENERATION"] = 0.0
+        return x
+    n = n.apply(lambda x: swaperator(x), axis=1)
+
     # add/subtract dynamic loss
     # flow > 0 flow "from bus"->"to bus": "from bus"=flow; "to bus"=flow-loss
     # flow < 0 flow "to bus"->"from bus": "to bus"=flow; "from bus"=flow+loss
-    #pdb.set_trace()
-    bpos = b.copy().ix[b.FROM_MW>=0.0]
-    bneg = b.copy().ix[b.FROM_MW<0.0]
+    # pdb.set_trace()
+    bpos = b.copy().ix[b.FROM_MW >= 0.0]
+    bneg = b.copy().ix[b.FROM_MW < 0.0]
     bpos['TO_MW'] = bpos['FROM_MW'] - bpos['DynamicLoss (MW)']
     bneg['TO_MW'] = bneg['FROM_MW']
     bneg['FROM_MW'] = bneg['FROM_MW'] + bneg['DynamicLoss (MW)']
@@ -72,8 +85,7 @@ def load_vSPD_data(vSPD_b, vSPD_n):
     b = b.sort_index().ix[:, ['FROM_MW', 'TO_MW']]
     return n, b
 
-
-def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
+def trans_use(b, n, nmap, brmap, downstream=True):
     """Subroutine to calculate tranmission usage matrix"""
     def A(b, n, downstream=downstream):
         """Given branch flows and load/generation build the A matrix
@@ -144,6 +156,7 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         allbus = list(set(bd.index.levels[0]) | set(bd.index.levels[1]))
         totbus = len(allbus)
         bdd = bd.groupby(level=[0, 1]).sum().dropna()
+
         bpos = bdd.TO_MW >= 0  # Masks that depend on flow direction
         bneg = bdd.TO_MW < 0
         bposx = np.array([bpos.values, ] * totbus).transpose()
@@ -156,33 +169,22 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
         b_out = bdd.FROM_MW.values
         b_inx = np.array([b_in, ] * totbus).transpose()
         b_outx = np.array([b_out, ] * totbus).transpose()
+        iA_df = pd.DataFrame(iA, index=allbus, columns=allbus)
+        i_A_ibus = iA_df.ix[ibus, :]
+        i_A_jbus = iA_df.ix[jbus, :]
+        Pdd = [plg.values, ] * len(b_in)
+        Dilk1 = np.abs(b_inx) * i_A_jbus.values * Pdd * (1 / pij)
+        Dilk2 = np.abs(b_outx) * i_A_ibus.values * Pdd * (1 / pii)
         if downstream:  # calculate nett branch flows for downstream to demand
-            iAd_df = pd.DataFrame(iA, index=allbus, columns=allbus)
-            i_Ad_ibus = iAd_df.ix[ibus, :]
-            i_Ad_jbus = iAd_df.ix[jbus, :]
-            Pdd = [plg.values, ] * len(b_in)
-            DDilk1 = np.abs(b_inx) * i_Ad_jbus.values * Pdd * (1 / pij)
-            DDilk2 = np.abs(b_outx) * i_Ad_ibus.values * Pdd * (1 / pii)
-            dfd = DDilk1 * bnegx + DDilk2 * bposx
-            dfd = pd.DataFrame(dfd, index=bdd.index,
-                               columns=allbus).fillna(0.0)
-            idx = list(set(dfd.columns) & set(nmap.index))  # filter
-            df = dfd[idx]
+            df = Dilk1 * bnegx + Dilk2 * bposx
         else:  # calculate gross branch flows for upstream to generators
-            iAu_df = pd.DataFrame(iA, index=allbus, columns=allbus)
-            i_Au_ibus = iAu_df.ix[ibus, :]
-            i_Au_jbus = iAu_df.ix[jbus, :]
-            Pgd = [plg.values, ] * len(b_in)
-            DGilk1 = np.abs(b_inx) * i_Au_jbus.values * Pgd * (1 / pij)
-            DGilk2 = np.abs(b_outx) * i_Au_ibus.values * Pgd * (1 / pii)
-            dfg = DGilk1 * bposx + DGilk2 * bnegx
-            dfg = pd.DataFrame(dfg, index=bdd.index,
-                               columns=allbus).fillna(0.0)
-            idx = list(set(dfg.columns) & set(nmap.index))  # filter
-            df = dfg[idx]
+            df = Dilk1 * bposx + Dilk2 * bnegx
+        df = pd.DataFrame(df, index=bdd.index, columns=allbus).fillna(0.0)
+        idx = list(set(df.columns) & set(nmap.index))  # filter
+        df = df[idx]
         return df
 
-    def bustocomp(df, nmap, brmap, NPmap, node=False):
+    def bustonode(df, nmap, brmap):
         """Given bus level data, group up to either ELB level,
            when node=False, or node level when node=True and map
            to branch names"""
@@ -202,30 +204,28 @@ def trans_use(b, n, nmap, brmap, NPmap, downstream=True):
                 return ', '.join(str(e) for e in idx)
             else:
                 return x
+
         df.index = df.index.map(lambda x: seriestolist(x))
-        if node:
-            return df
-        else:  # sum by ELB
-            df.columns = df.columns.map(lambda x: NPmap[x[0:7]])
-            df = df.groupby(level=0, axis=1, sort=False).sum()
-            return df
+            # if node:
+        return df
+        # else:  # sum by ELB
+            # df.columns = df.columns.map(lambda x: NPmap[x[0:7]])
+            # df = df.groupby(level=0, axis=1, sort=False).sum()
+            # return df
 
     if downstream:  # net downstream pg is nett of losses, pl is actual
         Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
-        df = topo(iAd, Pi, b, pl, downstream=True)
-        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+        df = topo(iAd, Pi, b, pl, downstream=True)  # bus level trace
+        df1 = bustonode(df.copy(), nmap, brmap)  # node level trace
     else:  # gross upstream pg is actual, pl grossed with losses
         Au, iAu, pg, pl, bdu, cjiu, Pi = A(b, n, downstream=downstream)
-        df = topo(iAu, Pi, b, pg, downstream=False)
-        df1 = bustocomp(df.copy(), nmap, brmap, NPmap, node=True)  # Node level,
-        #df2 = bustocomp(df.copy(), nmap, brmap, NPmap)  # ELB level
+        df = topo(iAu, Pi, b, pg, downstream=False)  # bus level trace
+        df1 = bustonode(df.copy(), nmap, brmap)  # node level trace
 
-    #return df, df1, df2, pl, pg
     return df, df1, pl, pg
 
 
-def sub_usage(df, pl, pg, nmap, NPmap):
+def sub_usage(df, pl, pg, nmap):
     """Calculate substation usage matrix.  Groups to node level, then substation
        level.  MW values are summed at substation level so represent total
        through flow, summed through all buses that comprise a substation.  As a
@@ -260,13 +260,13 @@ def sub_usage(df, pl, pg, nmap, NPmap):
         df.columns = df.columns.map(lambda x: nmap[x])
         return df
 
-    def node2sub(df, NPmap):
-        """Given node level data, group up to substation level"""
-        df = df.ix[df.sum(axis=1) > 0, df.sum() > 0]
-        df = df.groupby(df.columns.map(lambda x: NPmap[x[0:7]]),
-                        axis=1, sort=False).sum()
-        df = df.groupby(df.index.map(lambda x: x[0:3]), sort=False).sum()
-        return df
+    # def node2sub(df, NPmap):
+        # """Given node level data, group up to substation level"""
+        # df = df.ix[df.sum(axis=1) > 0, df.sum() > 0]
+        # df = df.groupby(df.columns.map(lambda x: NPmap[x[0:7]]),
+                        # axis=1, sort=False).sum()
+        # df = df.groupby(df.index.map(lambda x: x[0:3]), sort=False).sum()
+        # return df
 
     b_usage = bus_trace_usage(df, pl, pg, nmap)
     n_usage = bus2node(b_usage, nmap)
@@ -281,9 +281,7 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 # not fit all data (3 years worth) into memory all at once.
 # months.  Note: used a cool gawk command line script to split to monthlies...
 #
-# For each monthly data set, we loop over trading periods.  Note: it would be
-# much better suited (cleaner and faster) to use a DataFrame .groupby and .apply
-# methods for this... future todo... for now we loop...
+# For each monthly data set, we loop over trading periods.
 #
 # For each TP;
 #   - perform UP stream trace for generation usage of transmission assets
@@ -298,7 +296,7 @@ def sub_usage(df, pl, pg, nmap, NPmap):
 # Setup paths and create output directory structure if required.
 path = os.getcwd()
 
-test_data = 'testB'
+test_data = 'data'
 inpath = os.path.join(path, test_data, 'input', 'vSPDout')
 mappath = os.path.join(path, test_data, 'input', 'maps')
 outpath = os.path.join(path, test_data, 'output')
@@ -317,21 +315,18 @@ create_dir(os.path.join(outpath, 't'))  # total mean
 
 # Load data mappings
 
-NPmap = pd.read_csv(os.path.join(mappath, 'elb2gxp.csv'), index_col=0,
-                    header=None)[1].to_dict()
+# NPmap = pd.read_csv(os.path.join(mappath, 'elb2gxp.csv'), index_col=0,
+                    # header=None)[1].to_dict()
 brmap = pd.read_csv(os.path.join(mappath, 'brmap.csv'), index_col=[0, 1],
                     header=None)[2]
-nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
-                   header=None)[1]
+# nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
+                   # header=None)[1]
 nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
                     header=None)[1]
 
 logger.info(20*'*')
 logger.info("Start tracing routine")
 logger.info(20*'*')
-
-
-
 
 fc = {}  # failed counter
 TP = False
@@ -372,16 +367,16 @@ for y in [2011, 2012, 2013]:
                                     .reset_index('branch', drop=True)
                                 # Perform downstream trace
                                 dfd, dfd1, pl, pg = trans_use(b2, n2, nmap2,
-                                                              brmap, NPmap,
+                                                              brmap,
                                                               downstream=True)
-                                dfds = sub_usage(dfd, pl, pg, nmap2, NPmap)
+                                dfds = sub_usage(dfd, pl, pg, nmap2)
                                 td[(str(tp))] = dfd1
                                 sd[(str(tp))] = dfds
                                 # Perform upstream trace
                                 dfu, dfu1, pl, pg = trans_use(b2, n2, nmap2,
-                                                              brmap, NPmap,
+                                                              brmap,
                                                               downstream=False)
-                                dfus = sub_usage(dfu, pl, pg, nmap2, NPmap)
+                                dfus = sub_usage(dfu, pl, pg, nmap2)
                                 tu[(str(tp))] = dfu1
                                 su[(str(tp))] = dfus
                                 fc[(day, str(tp))] = 0
