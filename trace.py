@@ -1,9 +1,9 @@
 #!/usr/bin/python
 """TODO list:
   - loss handling checks out OK in tests
-  - added negative load to generation column - currently testing.
+  - fixed negative load issue - currently testing.
   - improve substation calcs?
-  - add generation-load calcs - would help checking of code
+  - add generation-load calcs - would help testing
   - add command line inputs
   - and options for outputs i.e., ELB/node etc.
   - general code readability improvements etc"""
@@ -61,7 +61,7 @@ def load_vSPD_data(vSPD_b, vSPD_n):
     n = n.drop(['allofact', 'bidMW'], axis=1)
 
     def swaperator(x):
-        """If load is negative put in generation column and vice-versa - slow!"""
+        """If load is neg put in gen column and vice-versa - slow!"""
         if x.LOAD < 0.0:
             x["GENERATION"] = -x["LOAD"]
             x["LOAD"] = 0.0
@@ -71,7 +71,7 @@ def load_vSPD_data(vSPD_b, vSPD_n):
         return x
     n = n.apply(lambda x: swaperator(x), axis=1)
 
-    # add/subtract dynamic loss
+    # add/subtract dynamic loss from vSPD output
     # flow > 0 flow "from bus"->"to bus": "from bus"=flow; "to bus"=flow-loss
     # flow < 0 flow "to bus"->"from bus": "to bus"=flow; "from bus"=flow+loss
     # pdb.set_trace()
@@ -260,18 +260,10 @@ def sub_usage(df, pl, pg, nmap):
         df.columns = df.columns.map(lambda x: nmap[x])
         return df
 
-    # def node2sub(df, NPmap):
-        # """Given node level data, group up to substation level"""
-        # df = df.ix[df.sum(axis=1) > 0, df.sum() > 0]
-        # df = df.groupby(df.columns.map(lambda x: NPmap[x[0:7]]),
-                        # axis=1, sort=False).sum()
-        # df = df.groupby(df.index.map(lambda x: x[0:3]), sort=False).sum()
-        # return df
-
     b_usage = bus_trace_usage(df, pl, pg, nmap)
     n_usage = bus2node(b_usage, nmap)
 
-    return n_usage#, s_usage
+    return n_usage
 
 
 ###############################################################################
@@ -319,10 +311,10 @@ create_dir(os.path.join(outpath, 't'))  # total mean
                     # header=None)[1].to_dict()
 brmap = pd.read_csv(os.path.join(mappath, 'brmap.csv'), index_col=[0, 1],
                     header=None)[2]
-# nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
-                   # header=None)[1]
-nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
-                    header=None)[1]
+nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
+                   header=None)[1]
+# nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
+                    # header=None)[1]
 
 logger.info(20*'*')
 logger.info("Start tracing routine")
@@ -366,17 +358,17 @@ for y in [2011, 2012, 2013]:
                                 b2 = b.xs(day, level=0).xs(tp, level=0)\
                                     .reset_index('branch', drop=True)
                                 # Perform downstream trace
-                                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap2,
+                                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap,
                                                               brmap,
                                                               downstream=True)
-                                dfds = sub_usage(dfd, pl, pg, nmap2)
+                                dfds = sub_usage(dfd, pl, pg, nmap)
                                 td[(str(tp))] = dfd1
                                 sd[(str(tp))] = dfds
                                 # Perform upstream trace
-                                dfu, dfu1, pl, pg = trans_use(b2, n2, nmap2,
+                                dfu, dfu1, pl, pg = trans_use(b2, n2, nmap,
                                                               brmap,
                                                               downstream=False)
-                                dfus = sub_usage(dfu, pl, pg, nmap2)
+                                dfus = sub_usage(dfu, pl, pg, nmap)
                                 tu[(str(tp))] = dfu1
                                 su[(str(tp))] = dfus
                                 fc[(day, str(tp))] = 0
