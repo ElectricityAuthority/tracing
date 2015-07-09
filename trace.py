@@ -206,12 +206,7 @@ def trans_use(b, n, nmap, brmap, downstream=True):
                 return x
 
         df.index = df.index.map(lambda x: seriestolist(x))
-            # if node:
         return df
-        # else:  # sum by ELB
-            # df.columns = df.columns.map(lambda x: NPmap[x[0:7]])
-            # df = df.groupby(level=0, axis=1, sort=False).sum()
-            # return df
 
     if downstream:  # net downstream pg is nett of losses, pl is actual
         Ad, iAd, pg, pl, bdd, cjid, Pi = A(b, n, downstream=downstream)
@@ -299,29 +294,22 @@ def create_dir(dirpath):
         os.makedirs(dirpath)
 
 create_dir(outpath)
-create_dir(os.path.join(outpath, 'tp'))  # trading period
-create_dir(os.path.join(outpath, 'd'))  # daily mean
-create_dir(os.path.join(outpath, 'm'))  # monthly mean
-create_dir(os.path.join(outpath, 'y'))  # annual mean
-create_dir(os.path.join(outpath, 't'))  # total mean
+paths = ['tp', 'd', 'm', 'y', 't']
+for p in paths:
+    create_dir(os.path.join(outpath, p))
 
 # Load data mappings
-
-# NPmap = pd.read_csv(os.path.join(mappath, 'elb2gxp.csv'), index_col=0,
-                    # header=None)[1].to_dict()
 brmap = pd.read_csv(os.path.join(mappath, 'brmap.csv'), index_col=[0, 1],
                     header=None)[2]
 nmap = pd.read_csv(os.path.join(mappath, 'busnode.csv'), index_col=0,
                    header=None)[1]
-# nmap2 = pd.read_csv(os.path.join(mappath, 'busnode2.csv'), index_col=0,
-                    # header=None)[1]
 
 logger.info(20*'*')
 logger.info("Start tracing routine")
 logger.info(20*'*')
 
 fc = {}  # failed counter
-TP = False
+TP =True
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
 test_limit_min = datetime(2011, 1, 1)
@@ -340,7 +328,7 @@ for y in [2011, 2012, 2013]:
                 info_text = 'INPUT: b_' + ym + ', n_' + ym
                 logger.info(info_text)
                 n, b = load_vSPD_data(vSPD_b, vSPD_n)
-                #pdb.set_trace()
+                # pdb.set_trace()
 
                 for day in n.index.levels[0]:
                     """Possible update. Use groupby/apply on pd.Dataframe."""
