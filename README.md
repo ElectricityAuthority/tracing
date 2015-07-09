@@ -5,7 +5,7 @@ This repository contains code to run the power flow tracing routine that is used
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
 **NOTE: this is a live repository and will be updated over the coming weeks with additional code as I make it available.  It is similar, but not the same as, the code based used for the TPM work.  Further improvements are planned in the future (DJH, 3 July, 2015)
-Have made changes to the post processing, process - see below- still waiting for OK on RAB file publish.**
+Have made changes to the post processing, process - see below- RAB file now published.**
 
 ## Inputs:
 
@@ -21,6 +21,30 @@ http://bit.ly/1eTEd9o
 
 A sample of the input data can be found within this repository at /data/input along with a fuller description of the input data which also includes mapping files required for the tracing routine. 
 
+
+### Testing
+
+A couple of simple tests have been included to help understanding and to aid in bug-fixing the tracing code.  
+
+  - A simple 3 bus system, and;
+  - the 4 bus system used in the Bialek paper [1].  
+  
+These tests use input files in the same format as the vSPD output files.  
+
+A test can be done by setting the test_data variable to either testA, for the 3 bus system, or testB for the 4 bus system.  Currently it will error out as only 1 TP is traced.  Results can be found in the testA and testB directories (DJH - 9/7/2015)
+
+These tests are being used to help fine-tune the trace code and provide more confidence in the trace output.
+
+Recent testing (6-9/7/2015) has led to a some fine-tuning of the tracing process. 
+
+  - upstream trace calculations have been altered - so far appears to be minor.
+  - loss modelling is now being handled correctly - this is second-order, so will have a minor impact.
+  - negative load was not modelled.  This over-sight effected wind generation.  This is now modelled and currently been tested.
+
+### Future improvements
+
+  - the substation share process could be redesigned/improved, see comments in trace.py.
+  - the code could do with a bit of re-factoring and a tidy to improve readability, etc
 
 ## Outputs
 
