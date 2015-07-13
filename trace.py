@@ -261,6 +261,18 @@ def sub_usage(df, pl, pg, nmap):
     return n_usage
 
 
+def output_results(df, outpath, ymd, tt, TP=False):
+    """function that outputs trace results based on trace type (tt)"""
+    pac = os.path.join(outpath, 'd', tt + '_' + ymd)
+    pap = os.path.join(outpath, 'tp', tt + '_' + ymd[:8] + '.pickle')
+    P = pd.Panel(df).fillna(0.0)
+    if TP:
+        P.to_pickle(pap)
+        logger.info("|OUTPUT: " + pap + '|')
+    P.mean(0).to_csv(pac, float_format='%.4f')
+    logger.info("|OUTPUT: " + pac + '|')
+
+
 ###############################################################################
 # Start TRACE
 #
@@ -309,99 +321,64 @@ logger.info("Start tracing routine")
 logger.info(20*'*')
 
 fc = {}  # failed counter
-TP =True
+TP = True
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
-test_limit_min = datetime(2011, 1, 1)
-test_limit_max = datetime(2013, 12, 31)
-for y in [2011, 2012, 2013]:
-    if (y <= test_limit_max.year) & (y >= test_limit_min.year):
-        for m in range(1, 13):  # load monthly data
-            if (m <= test_limit_max.month) & (m >= test_limit_min.month):
-                td = {}  # downstream transmission usage
-                sd = {}  # downstream substation usage
-                tu = {}  # upstream transmission usage
-                su = {}  # upstream substation usage
-                ym = str(y) + str(m).zfill(2) + '.csv'
-                vSPD_b = os.path.join(inpath, 'b_' + ym)
-                vSPD_n = os.path.join(inpath, 'n_' + ym)
-                info_text = 'INPUT: b_' + ym + ', n_' + ym
-                logger.info(info_text)
-                n, b = load_vSPD_data(vSPD_b, vSPD_n)
-                # pdb.set_trace()
+start = datetime(2011, 1, 1)
+end = datetime(2011, 2, 2)
 
-                for day in n.index.levels[0]:
-                    """Possible update. Use groupby/apply on pd.Dataframe."""
-                    ymd = str(y) + str(m).zfill(2) + str(day.day).zfill(2) + '.csv'
-                    if (day <= test_limit_max) & (day >= test_limit_min):
-                        for tp in n.index.levels[1]:
-                            try:
-                                info_text = "TRACE: " + str(day.date()) + "|TP " + \
-                                            str(int(tp)).zfill(2) + "|Mem=" + \
-                                            str(phymem_usage()[2]) + "%"
-                                logger.info(info_text)
-                                # get TP level data
-                                n2 = n.xs(day, level=0).xs(tp, level=0)\
-                                    .reset_index('node', drop=True)
-                                b2 = b.xs(day, level=0).xs(tp, level=0)\
-                                    .reset_index('branch', drop=True)
-                                # Perform downstream trace
-                                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap,
-                                                              brmap,
-                                                              downstream=True)
-                                dfds = sub_usage(dfd, pl, pg, nmap)
-                                td[(str(tp))] = dfd1
-                                sd[(str(tp))] = dfds
-                                # Perform upstream trace
-                                dfu, dfu1, pl, pg = trans_use(b2, n2, nmap,
-                                                              brmap,
-                                                              downstream=False)
-                                dfus = sub_usage(dfu, pl, pg, nmap)
-                                tu[(str(tp))] = dfu1
-                                su[(str(tp))] = dfus
-                                fc[(day, str(tp))] = 0
-                            except Exception:
-                                logger.error("***FAILED*** for " + str(day) +
-                                            " trading period " + str(int(tp)) +
-                                            "***")
-                                logger.error(traceback.print_exc())
-                                fc[(day, str(tp))] = 1
-                                pass
-                        # average daily output filenames (as csv)
-                        # functionize this...
-                        tuc = os.path.join(outpath, 'd', 'tu_' + ymd)
-                        suc = os.path.join(outpath, 'd', 'su_' + ymd)
-                        tdc = os.path.join(outpath, 'd', 'td_' + ymd)
-                        sdc = os.path.join(outpath, 'd', 'sd_' + ymd)
-                        # TP level data daily output filenames (pickles)
-                        tup = os.path.join(outpath, 'tp', 'tu_' + ymd[:8] + '.pickle')
-                        sup = os.path.join(outpath, 'tp', 'su_' + ymd[:8] + '.pickle')
-                        tdp = os.path.join(outpath, 'tp', 'td_' + ymd[:8] + '.pickle')
-                        sdp = os.path.join(outpath, 'tp', 'sd_' + ymd[:8] + '.pickle')
-                        # panelize, fillna
-                        TU = pd.Panel(tu).fillna(0.0)
-                        SU = pd.Panel(su).fillna(0.0)
-                        TD = pd.Panel(td).fillna(0.0)
-                        SD = pd.Panel(sd).fillna(0.0)
-                        # output data files
-                        if TP:
-                            TU.to_pickle(tup)
-                            SU.to_pickle(sup)
-                            TD.to_pickle(tdp)
-                            SD.to_pickle(sdp)
-                        TU.mean(0).to_csv(tuc, float_format='%.4f')
-                        SU.mean(0).to_csv(suc, float_format='%.4f')
-                        TD.mean(0).to_csv(tdc, float_format='%.4f')
-                        SD.mean(0).to_csv(sdc, float_format='%.4f')
-                        # log
-                        logger.info(21*'=')
-                        logger.info("|OUTPUT: " + tup + '|')
-                        logger.info("|OUTPUT: " + sup + '|')
-                        logger.info("|OUTPUT: " + tdp + '|')
-                        logger.info("|OUTPUT: " + sdp + '|')
-                        logger.info("|OUTPUT: " + tuc + '|')
-                        logger.info("|OUTPUT: " + suc + '|')
-                        logger.info("|OUTPUT: " + tdc + '|')
-                        logger.info("|OUTPUT: " + sdc + '|')
+print start
+for m in pd.date_range(start=start, end=end, freq='M'):
+    print m.month, m.year
+    td = {}  # downstream transmission usage
+    sd = {}  # downstream substation usage
+    tu = {}  # upstream transmission usage
+    su = {}  # upstream substation usage
+    ym = str(m.year) + str(m.month).zfill(2) + '.csv'
+    vSPD_b = os.path.join(inpath, 'b_' + ym)
+    vSPD_n = os.path.join(inpath, 'n_' + ym)
+    info_text = 'INPUT: b_' + ym + ', n_' + ym
+    logger.info(info_text)
+    n, b = load_vSPD_data(vSPD_b, vSPD_n)
+    # pdb.set_trace()
+
+    for day in n.index.levels[0]:
+        """Possible update. Use groupby/apply on pd.Dataframe."""
+        ymd = str(m.year) + str(m.month).zfill(2) + str(day.day).zfill(2) + '.csv'
+        for tp in n.index.levels[1]:
+            try:
+                info_text = "TRACE: " + str(day.date()) + "|TP " + \
+                            str(int(tp)).zfill(2) + "|Mem=" + \
+                            str(phymem_usage()[2]) + "%"
+                logger.info(info_text)
+                # get TP level data
+                n2 = n.xs(day, level=0).xs(tp, level=0).reset_index('node',
+                                                                    drop=True)
+                b2 = b.xs(day, level=0).xs(tp, level=0).reset_index('branch',
+                                                                    drop=True)
+                # Perform downstream trace
+                dfd, dfd1, pl, pg = trans_use(b2, n2, nmap, brmap,
+                                              downstream=True)
+                dfds = sub_usage(dfd, pl, pg, nmap)
+                td[(str(tp))] = dfd1
+                sd[(str(tp))] = dfds
+                # Perform upstream trace
+                dfu, dfu1, pl, pg = trans_use(b2, n2, nmap, brmap,
+                                              downstream=False)
+                dfus = sub_usage(dfu, pl, pg, nmap)
+                tu[(str(tp))] = dfu1
+                su[(str(tp))] = dfus
+                fc[(day, str(tp))] = 0
+            except Exception:
+                logger.error("***FAILED*** for " + str(day) +
+                             " trading period " + str(int(tp)) + "***")
+                logger.error(traceback.print_exc())
+                fc[(day, str(tp))] = 1
+                pass
+
+        output_results(td, outpath, ymd, 'td', TP)
+        output_results(tu, outpath, ymd, 'tu', TP)
+        output_results(sd, outpath, ymd, 'sd', TP)
+        output_results(su, outpath, ymd, 'su', TP)
 
 fc = pd.Series(fc).to_csv(os.path.join(outpath, 'fc.csv'))
