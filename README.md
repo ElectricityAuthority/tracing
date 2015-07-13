@@ -39,7 +39,7 @@ Recent testing (6-9/7/2015) has led to a some fine-tuning of the tracing process
 
   - upstream trace calculations have been altered - so far appears to be minor.
   - loss modelling is now being handled correctly - this is second-order, so will have a minor impact.
-  - negative load was not modelled.  This over-sight effected wind generation.  This is now modelled and currently been tested.
+  - negative load was not modelled.  This over-sight effected wind generation.  This is now modelled and currently being tested.
 
 ### Future improvements
 
