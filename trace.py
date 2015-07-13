@@ -1,7 +1,5 @@
 #!/usr/bin/python
 """TODO list:
-  - loss handling checks out OK in tests
-  - fixed negative load issue - currently testing.
   - improve substation calcs?
   - add generation-load calcs - would help testing
   - add command line inputs
@@ -325,11 +323,9 @@ TP = True
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
 start = datetime(2011, 1, 1)
-end = datetime(2011, 2, 2)
+end = datetime(2013, 12, 31)
 
-print start
 for m in pd.date_range(start=start, end=end, freq='M'):
-    print m.month, m.year
     td = {}  # downstream transmission usage
     sd = {}  # downstream substation usage
     tu = {}  # upstream transmission usage
