@@ -1,10 +1,4 @@
 #!/usr/bin/python
-"""TODO list:
-  - improve substation calcs?
-  - add generation-load calcs - would help testing
-  - add command line inputs
-  - and options for outputs i.e., ELB/node etc.
-  - general code readability improvements etc"""
 
 import numpy as np
 import pandas as pd
@@ -319,7 +313,7 @@ logger.info("Start tracing routine")
 logger.info(20*'*')
 
 fc = {}  # failed counter
-TP = True
+TP = False
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
 start = datetime(2011, 1, 1)
