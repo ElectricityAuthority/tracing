@@ -148,7 +148,6 @@ def trans_use(b, n, nmap, brmap, downstream=True):
         allbus = list(set(bd.index.levels[0]) | set(bd.index.levels[1]))
         totbus = len(allbus)
         bdd = bd.groupby(level=[0, 1]).sum().dropna()
-
         bpos = bdd.TO_MW >= 0  # Masks that depend on flow direction
         bneg = bdd.TO_MW < 0
         bposx = np.array([bpos.values, ] * totbus).transpose()
@@ -164,9 +163,13 @@ def trans_use(b, n, nmap, brmap, downstream=True):
         iA_df = pd.DataFrame(iA, index=allbus, columns=allbus)
         i_A_ibus = iA_df.ix[ibus, :]
         i_A_jbus = iA_df.ix[jbus, :]
+        # print iA_df
         Pdd = [plg.values, ] * len(b_in)
-        Dilk1 = np.abs(b_inx) * i_A_jbus.values * Pdd * (1 / pij)
-        Dilk2 = np.abs(b_outx) * i_A_ibus.values * Pdd * (1 / pii)
+        # print Pdd
+        # print b_inx
+        # print b_outx
+        Dilk1 = np.abs(b_outx) * i_A_jbus.values * Pdd * (1 / pij)
+        Dilk2 = np.abs(b_inx) * i_A_ibus.values * Pdd * (1 / pii)
         if downstream:  # calculate nett branch flows for downstream to demand
             df = Dilk1 * bnegx + Dilk2 * bposx
         else:  # calculate gross branch flows for upstream to generators
@@ -174,6 +177,7 @@ def trans_use(b, n, nmap, brmap, downstream=True):
         df = pd.DataFrame(df, index=bdd.index, columns=allbus).fillna(0.0)
         idx = list(set(df.columns) & set(nmap.index))  # filter
         df = df[idx]
+        # print df
         return df
 
     def bustonode(df, nmap, brmap):
@@ -287,7 +291,7 @@ def output_results(df, outpath, ymd, tt, TP=False):
 # Setup paths and create output directory structure if required.
 path = os.getcwd()
 
-test_data = 'data'
+test_data = 'testB'
 inpath = os.path.join(path, test_data, 'input', 'vSPDout')
 mappath = os.path.join(path, test_data, 'input', 'maps')
 outpath = os.path.join(path, test_data, 'output')
