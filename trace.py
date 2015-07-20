@@ -163,11 +163,7 @@ def trans_use(b, n, nmap, brmap, downstream=True):
         iA_df = pd.DataFrame(iA, index=allbus, columns=allbus)
         i_A_ibus = iA_df.ix[ibus, :]
         i_A_jbus = iA_df.ix[jbus, :]
-        # print iA_df
         Pdd = [plg.values, ] * len(b_in)
-        # print Pdd
-        # print b_inx
-        # print b_outx
         Dilk1 = np.abs(b_outx) * i_A_jbus.values * Pdd * (1 / pij)
         Dilk2 = np.abs(b_inx) * i_A_ibus.values * Pdd * (1 / pii)
         if downstream:  # calculate nett branch flows for downstream to demand
@@ -177,7 +173,6 @@ def trans_use(b, n, nmap, brmap, downstream=True):
         df = pd.DataFrame(df, index=bdd.index, columns=allbus).fillna(0.0)
         idx = list(set(df.columns) & set(nmap.index))  # filter
         df = df[idx]
-        # print df
         return df
 
     def bustonode(df, nmap, brmap):
@@ -291,7 +286,7 @@ def output_results(df, outpath, ymd, tt, TP=False):
 # Setup paths and create output directory structure if required.
 path = os.getcwd()
 
-test_data = 'testB'
+test_data = 'data'
 inpath = os.path.join(path, test_data, 'input', 'vSPDout')
 mappath = os.path.join(path, test_data, 'input', 'maps')
 outpath = os.path.join(path, test_data, 'output')
@@ -317,7 +312,7 @@ logger.info("Start tracing routine")
 logger.info(20*'*')
 
 fc = {}  # failed counter
-TP = False
+TP = True
 # The test limits and if statements below don't work as intended - needs
 # sorting out - use pd.date_range I reckon.
 start = datetime(2011, 1, 1)
