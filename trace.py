@@ -19,6 +19,74 @@ logger = l.getLogger('TRACE')
 logger.setLevel(l.INFO)
 
 
+def load_daily_vSPD_data(vSPD_brch, vSPD_bus, vSPD_busmap, mappings=True, pre_msp=False):
+    """Function that loads vSPD data.  On 21 July, 2009 the input data changed and we need to handle bus mappings for this"""
+    def make_int(x):
+        try:
+            return int(x)
+        except:
+            try:
+                if 'HAY' in x:
+                    return int(x.replace('HAY','819'))
+                if 'BEN' in x:
+                    return int(x.replace('BEN','259'))
+            except:
+                print str(x)
+                return x
+    # Load bus/node mappings
+    busmap = pd.read_csv(vSPD_busmap, index_col=0, parse_dates=True)
+    if not pre_msp:
+        busmap.Bus = busmap.Bus.map(lambda x: make_int(x))
+        busmap.set_index('Bus', append=True, inplace=True)
+    if pre_msp:  #set integer bus mapping on nodes
+        buses = set(busmap.Node.values) | set(busmap.Bus.values)
+        busmap = pd.Series(list(buses)).reset_index().set_index(0)['index'].to_dict()
+
+    b = pd.read_csv(vSPD_brch, index_col=0, parse_dates=True)
+    b.rename(columns=dict(zip(b.columns[:4], ['branch', 'FROM_ID_BUS', 'TO_ID_BUS', 'FROM_MW',])), inplace=True)
+    b['TO_MW'] = b['FROM_MW'] - b['DynamicLoss (MW)']
+    if not pre_msp:
+        b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: make_int(x))
+        b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: make_int(x))
+    if pre_msp:
+        b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: busmap[x])
+        b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: busmap[x])
+
+
+    b = b.set_index(['branch','FROM_ID_BUS', 'TO_ID_BUS'], append= True)
+    b = b.ix[:,['FROM_MW', 'TO_MW']]
+
+    n = pd.read_csv(vSPD_bus, index_col=0, parse_dates=True)
+    n.rename(columns=dict(zip(n.columns[:3],['bus','GENERATION', 'LOAD'])), inplace=True)
+    n = n.ix[(n['GENERATION'] != 0.0) | (n['LOAD'] != 0.0)]
+    if not pre_msp:
+        n.bus = n.bus.map(lambda x: make_int(x))
+    if pre_msp:
+        n['node'] = n.bus
+        n.bus = n.bus.map(lambda x: busmap[x])
+
+    n.set_index('bus', append=True, inplace=True)
+
+    def add_node(x, busmap):
+        """Complicated substitution - nodename to bus, but some buses have no nodes?"""
+        try:
+            return busmap.loc[x,'Node'].values[-1]
+        except:
+            return np.NaN
+            pass
+    if not pre_msp:
+        n['node'] = n.index.map(lambda x: add_node(x, busmap))
+    n.set_index('node', append=True, inplace=True)
+    n = n.ix[:, ['GENERATION', 'LOAD']].swaplevel(1,2).sort_index()
+    if mappings:
+        #Get some mappings
+        nmap = n.reset_index(drop=False).ix[:,['node', 'bus']].drop_duplicates().set_index(['bus']).sort_index().node#.drop_duplicates(subset='node', take_last=True)
+        nmap = nmap.groupby(level=0).first()
+        brmap= b.reset_index(drop=False).ix[:,['branch','FROM_ID_BUS','TO_ID_BUS']].reset_index(drop=True).drop_duplicates().set_index(['FROM_ID_BUS','TO_ID_BUS'])['branch']
+    if mappings:
+        return n, b, nmap, brmap
+    else:
+        return n, b
 def load_vSPD_data(vSPD_b, vSPD_n):
     """Function that loads vSPD data"""
     def bmmap(x):
