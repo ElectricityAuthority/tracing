@@ -51,8 +51,6 @@ and,
 ```
 should run the simple 3 and 4 bus test systems saving the results, for inspection, into the output directorys of the test names.
 ```
-
-```
 ./trace.py -type=tpm --tp -s=2011-01-01 -e=2013-12-31  
 ```
 should run the Concept Consulting trace run over the three years of data saving data for each trading period (only do this if you have lots od disk space!)  

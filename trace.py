@@ -138,7 +138,7 @@ class trace():
         b.rename(columns=dict(zip(b.columns[:4], ['branch', 'FROM_ID_BUS',
                                                   'TO_ID_BUS', 'FROM_MW', ])),
                  inplace=True)
-        b['TO_MW'] = b['FROM_MW'] - b['DynamicLoss (MW)']
+        # b['TO_MW'] = b['FROM_MW'] - b['DynamicLoss (MW)']
         if not pre_msp:
             b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: make_int(x))
             b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: make_int(x))
@@ -146,8 +146,8 @@ class trace():
             b.FROM_ID_BUS = b.FROM_ID_BUS.map(lambda x: self.busmap[x])
             b.TO_ID_BUS = b.TO_ID_BUS.map(lambda x: self.busmap[x])
 
-        b = b.set_index(['branch', 'FROM_ID_BUS', 'TO_ID_BUS'], append=True)
-        b = b.ix[:, ['FROM_MW', 'TO_MW']]
+        # b = b.set_index(['branch', 'FROM_ID_BUS', 'TO_ID_BUS'], append=True)
+        # b = b.ix[:, ['FROM_MW', 'TO_MW']]
 
         n = pd.read_csv(self.vspd_node, index_col=0, parse_dates=True)
         n.rename(columns=dict(zip(n.columns[:3],
@@ -173,6 +173,31 @@ class trace():
             n['node'] = n.index.map(lambda x: add_node(x))
         n.set_index('node', append=True, inplace=True)
         n = n.ix[:, ['GENERATION', 'LOAD']].swaplevel(1, 2).sort_index()
+
+        def swaperator(x):
+            """If load is neg put in gen column and vice-versa - slow!"""
+            if x.LOAD < 0.0:
+                x["GENERATION"] = -x["LOAD"]
+                x["LOAD"] = 0.0
+            if x["GENERATION"] < 0.0:
+                x["LOAD"] = -x["GENERATION"]
+                x["GENERATION"] = 0.0
+            return x
+        n = n.apply(lambda x: swaperator(x), axis=1)
+        # add/subtract dynamic loss from vSPD output
+        # flow>0 flow "from bus"->"to bus": "from bus"=flow; "to bus"=flow-loss
+        # flow<0 flow "to bus"->"from bus": "to bus"=flow; "from bus"=flow+loss
+        # pdb.set_trace()
+        bpos = b.copy().ix[b.FROM_MW >= 0.0]
+        bneg = b.copy().ix[b.FROM_MW < 0.0]
+        bpos['TO_MW'] = bpos['FROM_MW'] - bpos['DynamicLoss (MW)']
+        bneg['TO_MW'] = bneg['FROM_MW']
+        bneg['FROM_MW'] = bneg['FROM_MW'] + bneg['DynamicLoss (MW)']
+        b = bneg.append(bpos)
+        # print b.tail()
+        b = b.set_index(['branch', 'FROM_ID_BUS', 'TO_ID_BUS'],
+                        append=True)
+        b = b.sort_index().ix[:, ['FROM_MW', 'TO_MW']]
         # get some mappings
         nmap = n.reset_index(drop=False).ix[:, ['node', 'bus']]\
             .drop_duplicates().set_index(['bus']).sort_index().node
