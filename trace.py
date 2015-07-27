@@ -8,7 +8,7 @@ import logging as l
 from psutil import phymem_usage
 import os
 import traceback
-# import pdb
+import pdb
 
 # setup command line option and argument parsing
 parser = argparse.ArgumentParser(description='Flow tracing routine')
@@ -81,6 +81,16 @@ class trace():
 
             self.busmap = pd.read_csv(self.vspd_busmap,
                                       index_col=0, parse_dates=True)
+        if (self.run == 'testA') or (self.run == 'testB'):
+            self.inpath = os.path.join(self.path, 'data', 'input', self.run,
+                                       'input', 'vSPDout')
+            self.mappath = os.path.join(self.path, 'data', 'input', self.run,
+                                        'input', 'maps')
+            # Load data mappings only once for the tpm trace
+            self.brmap = pd.read_csv(os.path.join(self.mappath, 'brmap.csv'),
+                                     index_col=[0, 1], header=None)[2]
+            self.nmap = pd.read_csv(os.path.join(self.mappath, 'busnode.csv'),
+                                    index_col=0, header=None)[1]
 
         self.fc = {}  # failed counter
         self.tp = p.tp  # Trading Period level output
@@ -91,8 +101,12 @@ class trace():
         # if self.end
 
     def create_output_dir(self):
-        if not os.path.exists(self.outpath):
+        if (self.run == 'tpm') or (self.run == 'vspd'):
             paths = ['tp', 'd', 'm', 'y', 't']
+        else:
+            paths = ['d']
+
+        if not os.path.exists(self.outpath):
             for p in paths:
                 os.makedirs(os.path.join(self.outpath, p))
 
@@ -172,7 +186,7 @@ class trace():
 
         return n, b
 
-    def load_concept_vSPD_data(self, vSPD_b, vSPD_n):
+    def load_tpm_vSPD_data(self, vSPD_b, vSPD_n):
         """Function that loads vSPD data"""
         def bmmap(x):
             """Extra nodes inserted by Concept"""
@@ -402,13 +416,13 @@ class trace():
 
         return n_usage
 
-    def output_results(self, df, ymd, tt):
+    def output_results(self, df, tt):
         """function that outputs trace results based on trace type (tt)"""
-        pac = os.path.join(self.outpath, 'd', tt + '_' + ymd)
+        pac = os.path.join(self.outpath, 'd', tt + '_' + self.ymd + '.csv')
         P = pd.Panel(df).fillna(0.0)
         if self.tp:
             pap = os.path.join(self.outpath, 'tp',
-                               tt + '_' + ymd[:8] + '.pickle')
+                               tt + '_' + self.ymd[:8] + '.pickle')
             P.to_pickle(pap)
             logger.info("|OUTPUT: " + pap + '|')
         P.mean(0).to_csv(pac, float_format='%.4f')
@@ -446,29 +460,71 @@ class trace():
                 self.fc[(dt)] = 1
                 pass
 
-        self.output_results(td, self.ymd, 'td')
-        self.output_results(tu, self.ymd, 'tu')
-        self.output_results(sd, self.ymd, 'sd')
-        self.output_results(su, self.ymd, 'su')
+        self.output_results(td, 'td')
+        self.output_results(tu, 'tu')
+        self.output_results(sd, 'sd')
+        self.output_results(su, 'su')
 
         self.fc = pd.Series(self.fc).to_csv(self.outpath + 'fc' + self.ymd + '.csv')
+
+    def trace_month(self):
+        """do the month trace thing"""
+        for m in pd.date_range(start=self.start, end=self.end, freq='M'):
+            td = {}  # downstream transmission usage
+            sd = {}  # downstream substation usage
+            tu = {}  # upstream transmission usage
+            su = {}  # upstream substation usage
+            ym = str(m.year) + str(m.month).zfill(2) + '.csv'
+            vSPD_b = os.path.join(self.inpath, 'b_' + ym)
+            vSPD_n = os.path.join(self.inpath, 'n_' + ym)
+            info_text = 'INPUT: b_' + ym + ', n_' + ym
+            logger.info(info_text)
+            n, b = self.load_tpm_vSPD_data(vSPD_b, vSPD_n)
+            # pdb.set_trace()
+            for day in n.index.levels[0]:
+                ymd = str(m.year) + str(m.month).zfill(2) + str(day.day).zfill(2) + '.csv'
+                for tp in n.index.levels[1]:
+                    info_text = "TRACE: " + str(day.date()) + "|TP " + \
+                                str(int(tp)).zfill(2) + "|Mem=" + \
+                                str(phymem_usage()[2]) + "%"
+                    logger.info(info_text)
+                    try:
+                        # get TP level data
+                        n2 = n.xs(day, level=0).xs(tp, level=0)
+                        n2 = n2.reset_index('node', drop=True)
+                        b2 = b.xs(day, level=0).xs(tp, level=0)
+                        b2 = b2.reset_index('branch', drop=True)
+                        # Perform downstream trace
+                        dfd, dfd1, pl, pg = self.trans_use(b2, n2, downstream=True)
+                        dfds = self.sub_usage(dfd, pl, pg)
+                        td[(str(tp))] = dfd1
+                        sd[(str(tp))] = dfds
+                        # Perform upstream trace
+                        dfu, dfu1, pl, pg = self.trans_use(b2, n2, downstream=False)
+                        dfus = self.sub_usage(dfu, pl, pg)
+                        tu[(str(tp))] = dfu1
+                        su[(str(tp))] = dfus
+                        self.fc[(day, str(tp))] = 0
+                    except Exception:
+                        logger.error("***FAILED*** for " + str(day) +
+                                    " trading period " + str(int(tp)) + "***")
+                        logger.error(traceback.print_exc())
+                        self.fc[(day, str(tp))] = 1
+                        pass
+
+                self.output_results(td, ymd, 'td')
+                self.output_results(tu, ymd, 'tu')
+                self.output_results(sd, ymd, 'sd')
+                self.output_results(su, ymd, 'su')
+
+        pd.Series(self.fc).to_csv(os.path.join(self.outpath, 'fc.csv'))
 
 ###############################################################################
 # Start TRACE
 #
-# Loop through monthly branch and node files, we have to do this because we can
-# not fit all data (3 years worth) into memory all at once.
-# months.  Note: used a cool gawk command line script to split to monthlies...
-#
-# For each monthly data set, we loop over trading periods.
-#
 # For each TP;
 #   - perform UP stream trace for generation usage of transmission assets
 #   - perform DOWN stream trace for load/demand usage of transmission assets.
-#
-# To do this we, initiate collection dictionaries then loop over the input data.
-#
-# D J Hume, Dec 2014.
 #
 ###############################################################################
 
@@ -480,55 +536,7 @@ if __name__ == '__main__':
             logger.info(33*'*')
             logger.info("Start TPM tracing routine".center(33))
             logger.info(33*'*')
-            for m in pd.date_range(start=t.start, end=t.end, freq='M'):
-                td = {}  # downstream transmission usage
-                sd = {}  # downstream substation usage
-                tu = {}  # upstream transmission usage
-                su = {}  # upstream substation usage
-                ym = str(m.year) + str(m.month).zfill(2) + '.csv'
-                vSPD_b = os.path.join(t.inpath, 'b_' + ym)
-                vSPD_n = os.path.join(t.inpath, 'n_' + ym)
-                info_text = 'INPUT: b_' + ym + ', n_' + ym
-                logger.info(info_text)
-                n, b = t.load_concept_vSPD_data(vSPD_b, vSPD_n)
-                # pdb.set_trace()
-                for day in n.index.levels[0]:
-                    ymd = str(m.year) + str(m.month).zfill(2) + str(day.day).zfill(2) + '.csv'
-                    for tp in n.index.levels[1]:
-                        try:
-                            info_text = "TRACE: " + str(day.date()) + "|TP " + \
-                                        str(int(tp)).zfill(2) + "|Mem=" + \
-                                        str(phymem_usage()[2]) + "%"
-                            logger.info(info_text)
-                            # get TP level data
-                            n2 = n.xs(day, level=0).xs(tp, level=0)
-                            n2 = n2.reset_index('node', drop=True)
-                            b2 = b.xs(day, level=0).xs(tp, level=0)
-                            b2 = b2.reset_index('branch', drop=True)
-                            # Perform downstream trace
-                            dfd, dfd1, pl, pg = t.trans_use(b2, n2, downstream=True)
-                            dfds = t.sub_usage(dfd, pl, pg)
-                            td[(str(tp))] = dfd1
-                            sd[(str(tp))] = dfds
-                            # Perform upstream trace
-                            dfu, dfu1, pl, pg = t.trans_use(b2, n2, downstream=False)
-                            dfus = t.sub_usage(dfu, pl, pg)
-                            tu[(str(tp))] = dfu1
-                            su[(str(tp))] = dfus
-                            t.fc[(day, str(tp))] = 0
-                        except Exception:
-                            logger.error("***FAILED*** for " + str(day) +
-                                        " trading period " + str(int(tp)) + "***")
-                            logger.error(traceback.print_exc())
-                            t.fc[(day, str(tp))] = 1
-                            pass
-
-                    t.output_results(td, ymd, 'td')
-                    t.output_results(tu, ymd, 'tu')
-                    t.output_results(sd, ymd, 'sd')
-                    t.output_results(su, ymd, 'su')
-
-            fc = pd.Series(t.fc).to_csv(os.path.join(t.outpath, 'fc.csv'))
+            t.trace_month()
 
         if t.run == 'vspd':  # if we are tracing the output of a vSPD run
             # this is a daily run where self.start is considered to be the day
@@ -541,3 +549,19 @@ if __name__ == '__main__':
             if t.start > datetime(2009, 7, 21):
                 n, b = t.load_daily_vSPD_data(pre_msp=False)
                 t.trace_day(n, b)
+
+        if t.run == 'testA':
+            logger.info(40*'*')
+            logger.info("Start 3-bus test tracing routine".center(40))
+            logger.info(40*'*')
+            # pdb.set_trace()
+            t.trace_month()
+
+        if t.run == 'testB':
+            logger.info(40*'*')
+            logger.info("Start 4-bus test tracing routine".center(40))
+            logger.info(40*'*')
+            t.trace_month()
+
+
+

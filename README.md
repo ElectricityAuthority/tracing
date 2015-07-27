@@ -4,8 +4,64 @@ This repository contains code to run the power flow tracing routine that is used
 
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
-**NOTE: this is a live repository and will be updated over the coming weeks with additional code as I make it available.  It is similar, but not the same as, the code based used for the TPM work.  Further improvements are planned in the future (DJH, 3 July, 2015)
-Have made changes to the post processing, process - see below- RAB file now published.**
+**NOTE: this is currently still a live repository.**
+
+## Update:
+
+A new branch has been added called vSPD_output - this branch is currently making a few changes to the code base, including adding command line arguments and also the ability to be able to trace daily vSPD output data due to industry requesting this requirement.  Eventually this branch will become the master branch.  For those interested, please checkout this branch.
+```
+git checkout vSPD_output
+```
+
+The current TPM trace results use the code base that has been tagged at v0.1.  
+To use this version, checkout the tag,
+```
+git checkout v0.1
+```
+
+### The vSPD_output branch
+
+With this branch checked out, the current trace.py help message reads:
+
+```
+./trace.py --help     
+
+usage: trace.py [-h] [-type {tpm,vspd,testA,testB}] [--tp] [-s S] [-e E]
+
+Flow tracing routine
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -type {tpm,vspd,testA,testB}, --type {tpm,vspd,testA,testB}
+                        trace type (default = tpm) vSPD output GDX trace =
+                        vspd, testA 3 bus test system = testA testB 5 bus
+                        Bialek test system = testB
+  --tp                  trace output at trading period level
+  -s S, --start S       trace start time (default = 2011-01-01)
+  -e E, --end E         trace end time (default = 2013-12-31)
+```
+Running the trace from the command line.
+
+```
+./trace.py -type=testA
+```
+and,
+```
+./trace.py -type=testB
+```
+should run the simple 3 and 4 bus test systems saving the results, for inspection, into the output directorys of the test names.
+```
+
+```
+./trace.py -type=tpm --tp -s=2011-01-01 -e=2013-12-31  
+```
+should run the Concept Consulting trace run over the three years of data saving data for each trading period (only do this if you have lots od disk space!)  
+```
+./trace.py -type=vspd -s=2014-01-01 
+```
+runs the trace on vSPD output data for the 1st January, 2014.
+
+ 
 
 ## Inputs:
 
