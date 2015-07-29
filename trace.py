@@ -210,7 +210,8 @@ class trace():
             .set_index(['FROM_ID_BUS', 'TO_ID_BUS'])['branch']
         self.nmap = nmap
         self.brmap = brmap
-
+        print n.head()
+        print b.head()
         return n, b
 
     def load_tpm_vSPD_data(self, vSPD_b, vSPD_n):
@@ -515,7 +516,7 @@ class trace():
                 ymd = str(m.year) + str(m.month).zfill(2) + str(day.day).zfill(2) + '.csv'
                 for tp in n.index.levels[1]:
                     info_text = "TRACE: " + str(day.date()) + "|TP " + \
-                                str(int(tp)).zfill(2) + "|Mem=" + \
+                                str(int(tp)).zfill(2)
                     logger.info(info_text)
                     try:
                         # get TP level data
