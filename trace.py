@@ -1,7 +1,5 @@
 #!/usr/bin/python
-"""currently working on getting vSPD tracing working.  Need a "trace mode" for
-vSPD output.  Current issues include no allocating factors or bids - so results
-are out"""
+
 import numpy as np
 import pandas as pd
 from datetime import datetime
