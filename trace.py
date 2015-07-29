@@ -1,11 +1,13 @@
 #!/usr/bin/python
-
+"""currently working on getting vSPD tracing working.  Need a "trace mode" for
+vSPD output.  Current issues include no allocating factors or bids - so results
+are out"""
 import numpy as np
 import pandas as pd
 from datetime import datetime
 import argparse
 import logging as l
-from psutil import phymem_usage
+# from psutil import phymem_usage
 import os
 import traceback
 import pdb
@@ -101,8 +103,10 @@ class trace():
         # if self.end
 
     def create_output_dir(self):
-        if (self.run == 'tpm') or (self.run == 'vspd'):
+        if self.run == 'tpm':
             paths = ['tp', 'd', 'm', 'y', 't']
+        if self.run == 'vspd':
+            paths = ['tp', 'd', 'm', 'y', 't', 'fc']
         else:
             paths = ['d']
 
@@ -441,17 +445,21 @@ class trace():
 
         return n_usage
 
-    def output_results(self, df, tt):
+    def output_results(self, df, ymd, tt):
         """function that outputs trace results based on trace type (tt)"""
-        pac = os.path.join(self.outpath, 'd', tt + '_' + self.ymd + '.csv')
-        P = pd.Panel(df).fillna(0.0)
-        if self.tp:
-            pap = os.path.join(self.outpath, 'tp',
-                               tt + '_' + self.ymd[:8] + '.pickle')
-            P.to_pickle(pap)
-            logger.info("|OUTPUT: " + pap + '|')
-        P.mean(0).to_csv(pac, float_format='%.4f')
-        logger.info("|OUTPUT: " + pac + '|')
+        if tt == 'fc':
+            pd.Series(self.fc).to_csv(os.path.join(self.outpath, 'fc',
+                                                   'fc' + ymd + '.csv'))
+        else:
+            pac = os.path.join(self.outpath, 'd', tt + '_' + ymd + '.csv')
+            P = pd.Panel(df).fillna(0.0)
+            if self.tp:
+                pap = os.path.join(self.outpath, 'tp',
+                                   tt + '_' + ymd[:8] + '.pickle')
+                P.to_pickle(pap)
+                logger.info("|OUTPUT: " + pap + '|')
+            P.mean(0).to_csv(pac, float_format='%.4f')
+            logger.info("|OUTPUT: " + pac + '|')
 
     def trace_day(self, n, b):
         """do the daily trace thing"""
@@ -461,8 +469,7 @@ class trace():
             su = {}
             sd = {}
             try:
-                info_text = "TRACE: For " + str(dt) + "|Mem=" + \
-                    str(phymem_usage()[2]) + "%"
+                info_text = "TRACE: For " + str(dt)
                 logger.info(info_text)
                 n2 = n.xs(dt, level=0).reset_index('node', drop=True)
                 b2 = b.xs(dt, level=0).reset_index('branch', drop=True)
@@ -485,12 +492,12 @@ class trace():
                 self.fc[(dt)] = 1
                 pass
 
-        self.output_results(td, 'td')
-        self.output_results(tu, 'tu')
-        self.output_results(sd, 'sd')
-        self.output_results(su, 'su')
+        self.output_results(td, self.ymd, 'td')
+        self.output_results(tu, self.ymd, 'tu')
+        self.output_results(sd, self.ymd, 'sd')
+        self.output_results(su, self.ymd, 'su')
+        self.output_results(su, self.ymd, 'fc')
 
-        self.fc = pd.Series(self.fc).to_csv(self.outpath + 'fc' + self.ymd + '.csv')
 
     def trace_month(self):
         """do the month trace thing"""
@@ -511,7 +518,6 @@ class trace():
                 for tp in n.index.levels[1]:
                     info_text = "TRACE: " + str(day.date()) + "|TP " + \
                                 str(int(tp)).zfill(2) + "|Mem=" + \
-                                str(phymem_usage()[2]) + "%"
                     logger.info(info_text)
                     try:
                         # get TP level data

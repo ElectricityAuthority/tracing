@@ -9,10 +9,12 @@ import os
 import glob
 import numpy as np
 
-daily_input_path = os.path.join('data', 'output', 'd')
-monthly_output_path = os.path.join('data', 'output', 'm')
-annual_output_path = os.path.join('data', 'output', 'y')
-total_output_path = os.path.join('data', 'output', 't')
+run = 'tpm'
+
+daily_input_path = os.path.join('data', 'output', run, 'd')
+monthly_output_path = os.path.join('data', 'output', run,  'm')
+annual_output_path = os.path.join('data', 'output', run, 'y')
+total_output_path = os.path.join('data', 'output', run, 't')
 map_path = os.path.join('data', 'input', 'maps')
 
 # define function that returns the mean dataframe from panel of all dateframes
