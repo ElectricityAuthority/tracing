@@ -523,18 +523,18 @@ class trace():
 
         return n_usage
 
-    def output_results(self, df, ymd, tt):
+    def output_results(self, df, ymd, tt, tp=False):
         """function that outputs trace results based on trace type (tt)"""
         if tt == 'fc':
             pd.Series(self.fc).to_csv(os.path.join(self.outpath, 'fc',
                                                    'fc' + ymd + '.csv'))
         else:
-            if not self.tp:
+            if not tp:
                 pac = os.path.join(self.outpath, 'd', tt + '_' + ymd + '.csv')
                 P = pd.Panel(df).fillna(0.0)
                 P.mean(0).to_csv(pac, float_format='%.4f')
                 logger.info("|OUTPUT: " + pac + '|')
-            if self.tp:
+            if tp:
                 pap = os.path.join(self.outpath, 'tp',
                                    tt + '_' + ymd[:12] + '.csv')
                 df.to_csv(pap)
@@ -582,10 +582,14 @@ class trace():
                 self.fc[(dt)] = 1
                 pass
             if self.tp:
-                self.output_results(dfd1, self.ymd + str(i+1).zfill(2), 'td')
-                self.output_results(dfu1, self.ymd + str(i+1).zfill(2), 'tu')
-                self.output_results(dfds, self.ymd + str(i+1).zfill(2), 'sd')
-                self.output_results(dfus, self.ymd + str(i+1).zfill(2), 'su')
+                self.output_results(dfd1, self.ymd + str(i+1).zfill(2), 'td',
+                                    tp=self.tp)
+                self.output_results(dfu1, self.ymd + str(i+1).zfill(2), 'tu',
+                                    tp=self.tp)
+                self.output_results(dfds, self.ymd + str(i+1).zfill(2), 'sd',
+                                    tp=self.tp)
+                self.output_results(dfus, self.ymd + str(i+1).zfill(2), 'su',
+                                    tp=self.tp)
 
         self.output_results(td, self.ymd, 'td')
         self.output_results(tu, self.ymd, 'tu')
