@@ -537,7 +537,7 @@ class trace():
             if tp:
                 pap = os.path.join(self.outpath, 'tp',
                                    tt + '_' + ymd[:12] + '.csv')
-                df.to_csv(pap)
+                df.to_csv(pap, float_format='%.4f')
                 logger.info("|OUTPUT: " + pap + '|')
 
     def trace_day(self, n, b):

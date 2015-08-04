@@ -8,8 +8,31 @@ import pandas as pd
 import os
 import glob
 import numpy as np
+import argparse
 
-run = 'tpm'
+# setup command line option and argument parsing
+parser = argparse.ArgumentParser(description='Flow tracing post processing')
+parser.add_argument('-type', '--type', choices=['tpm', 'vspd',
+                                                'testA', 'testB'],
+                    action='store', dest='t', default='tpm',
+                    help="""trace type (default = tpm)
+                    vSPD output GDX trace = vspd,
+                    testA 3 bus test system = testA
+                    testB 5 bus Bialek test system = testB""")
+parser.add_argument('-s', '--start', action='store', dest='s',
+                    default="2011-01-01",
+                    help="""trace start time (default = 2011-01-01)""")
+parser.add_argument('-e', '--end', action='store', dest='e',
+                    default="2013-12-31",
+                    help="""trace end time (default = 2013-12-31)""")
+
+p = parser.parse_args()
+run = p.t
+print p.s
+start_year = int(p.s.split('-')[0][0:4])
+end_year = int(p.e.split('-')[0][0:4])
+print start_year
+print end_year
 
 daily_input_path = os.path.join('data', 'output', run, 'd')
 monthly_output_path = os.path.join('data', 'output', run,  'm')
@@ -26,13 +49,16 @@ def mean_results(input_path, year, month, trace_type='td'):
     files = glob.glob(os.path.join(daily_input_path, trace_type + '_' +
                                    str(year) + str(month).zfill(2) + '*.csv'))
     for i, f in enumerate(files):
-        P[i] = pd.read_csv(f, index_col=0)
+        df = pd.read_csv(f, index_col=0)
+        df = df.groupby(level=0).sum()  # make sure there are no duplicates in the index
+        P[i] = df
+
     return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)  # remember NaNs 2 0!
 
 # loop over daily results, save monthly means to m dir- this is slow...!
 
 for trace_type in ['td', 'tu', 'sd', 'su']:
-    for YYYY in range(2011, 2014):
+    for YYYY in range(start_year, end_year+1):
         for MM in range(1, 13):
             output_filename = os.path.join(monthly_output_path, trace_type + '_'
                                            + str(YYYY) + str(MM).zfill(2) + '.csv')
@@ -52,11 +78,12 @@ def mean_results(input_path, year, trace_type='td'):
     files = glob.glob(os.path.join(input_path, trace_type + '_' + str(year) + '*.csv'))
     for i, f in enumerate(files):
         # print i, f
-        P[i] = pd.read_csv(f, index_col=0)
+        df = pd.read_csv(f, index_col=0)
+        P[i] = df
     return pd.Panel(P).fillna(0.0).mean(0).fillna(0.0)
 
 for trace_type in ['td', 'tu', 'sd', 'su']:
-    for YYYY in range(2011, 2014):
+    for YYYY in range(start_year, end_year+1):
         output_filename = os.path.join(annual_output_path, trace_type + '_' +
                                        str(YYYY) + '.csv')
         print "Returning mean for " + trace_type + ': ' + str(YYYY) + ' to ' + \
