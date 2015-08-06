@@ -22,11 +22,11 @@ parser.add_argument('-type', '--type', choices=['tpm', 'vspd',
 parser.add_argument('--tp', action='store_true', dest='tp',
                     help="""trace output at trading period level""")
 parser.add_argument('-s', '--start', action='store', dest='s',
-                    default="2011-01-01",
-                    help="""trace start time (default = 2011-01-01)""")
+                    default="20110101",
+                    help="""trace start time (default = 20110101)""")
 parser.add_argument('-e', '--end', action='store', dest='e',
-                    default="2013-12-31",
-                    help="""trace end time (default = 2013-12-31)""")
+                    default="20131231",
+                    help="""trace end time (default = 20131231)""")
 parser.set_defaults(tp=False)
 
 p = parser.parse_args()
@@ -50,12 +50,8 @@ class trace():
         self.run = p.t
         self.path = os.getcwd()
         self.outpath = os.path.join(self.path, 'data', 'output', self.run)
-        self.start = datetime(int(p.s.split('-')[0]),
-                              int(p.s.split('-')[1]),
-                              int(p.s.split('-')[2]))  # start time
-        self.end = datetime(int(p.e.split('-')[0]),
-                            int(p.e.split('-')[1]),
-                            int(p.e.split('-')[2]))  # end time
+        self.start = datetime(int(p.s[:4]), int(p.s[4:6]), int(p.s[6:]))
+        self.end = datetime(int(p.e[:4]), int(p.e[4:6]), int(p.e[6:]))
         if self.run == 'tpm':
             self.inpath = os.path.join(self.path, 'data', 'input', self.run)
             self.mappath = os.path.join(self.path, 'data', 'input', 'maps')
@@ -132,6 +128,8 @@ class trace():
         busmap = self.busmap
         n = self.node
         b = self.brch
+        # pdb.set_trace()
+
         busmap['Total_Generation'] = busmap.index.map(lambda x: n['Generation (MW)'].ix[(x[0], x[1]), :])
         busmap['Total_Load'] = busmap.index.map(lambda x: n['Load (MW)'].ix[(x[0], x[1]), :])
         busmap['GENERATION'] = busmap.Allo * busmap.Total_Generation
