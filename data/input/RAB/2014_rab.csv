@@ -1,0 +1,991 @@
+0,1,RAB_IC,ic
+ABY_T2.T2,,0.0,Connection
+ADD_ISL1.1,,0.0,Connection
+ADD_ISL1.2,,0.0,Connection
+ADD_ISL1.3,,,
+"ADD_ISL2.1, ADD_ISL3.1",,0.0,Connection
+ADD_ISL4.1,,0.0,Connection
+ADD_ISL4.2,,0.0,Connection
+ADD_ISL4.3,,,
+"ADD_T2.T2, ADD_T3.T3, ADD_T6.T6, ADD_T7.T7",,0.0,Connection
+ADD_T5.T5,,0.0,Connection
+"ALB_HEN1.1, ALB_HEN2.1",,16.324263574651162,Interconnection
+ALB_HEN3.1,,3.101645561492357,Interconnection
+ALB_HPI1.1,,1.7218989631540342,Interconnection
+ALB_SVL1.1,,0.0,Connection
+ALB_SVL2.1,,0.0,Connection
+"ALB_T3.T3, ALB_T6.T6, ALB_T8.T8",,0.0,Connection
+ALB_T4.T4,,4.70475909,Interconnection
+ALB_WRD1.1,,,
+ALB_WRD2.1,,,
+ALB_WRD3.1,,,
+ALB_WRD4.1,,66.26266258,Interconnection
+ANI_MAT.1,,,
+ANI_T1.T1,,,
+ANI_T2.T2,,,
+APS_T1.T1,,0.0,Connection
+ARA_T1.T1,,,
+ARA_T2.T2,,,
+ARA_T3.T3,,,
+ARA_WRK.1,,0.0,Connection
+ARG_T1.T1,,,
+ARI_BOB1.1,,7.77458108,Interconnection
+"ARI_HAM1.1, ARI_HAM2.1",,3.0436909500000002,Interconnection
+ARI_HTI.1,,1.15141924,Interconnection
+"ARI_KIN1.1, ARI_KIN2.1",,1.6382066489559193,Interconnection
+ARI_ONG.1,,0.7017552320414847,Interconnection
+ARI_ONG.2,,0.9678753979585153,Interconnection
+ARI_ONG.3,,0.0,Connection
+ARI_T1.T1,,,
+ARI_T5.T5,,,
+ARI_T6.T6,,,
+ARI_T7.T7,,,
+ARI_T8.T8,,,
+ASB_BRY.1,,9.852483609282118,Interconnection
+ASB_HBK1.1,,,
+ASB_ISL1.1,,8.877201587876423,Interconnection
+"ASB_T1.T1, ASB_T3.T3",,0.0,Connection
+"ASB_T10.T10, ASB_T8.T8",,0.0,Connection
+ASB_T9.T9,,0.0,Connection
+ASB_TIM_TWZ1.1,,7.95763275222556,Interconnection
+ASB_TIM_TWZ1.2,,1.471945165,Interconnection
+ASB_TIM_TWZ1.3,,8.61885223669517,Interconnection
+ASB_TIM_TWZ2.1,,7.95763275222556,Interconnection
+ASB_TIM_TWZ2.2,,1.471945165,Interconnection
+ASB_TIM_TWZ2.3,,8.61885223669517,Interconnection
+ASY_SBK.1,,0.01049933067349927,Connection
+"ASY_T3.T3, ASY_T5.T5",,0.0,Connection
+ASY_WPR.1,,0.03125094894582724,Connection
+ATI_OHK.1,,0.11644847592592594,Interconnection
+"ATI_T1.T1, ATI_T2.T2, ATI_T3.T3, ATI_T4.T4",,,
+"ATI_TRK1.1, ATI_TRK2.1",,3.66441023,Interconnection
+ATI_WKM.1,,0.13805877,Interconnection
+ATU_DOB1.1,,0.660847490614035,Interconnection
+ATU_RFN_IGH1.1,,1.8139269103728073,Interconnection
+ATU_RFN_IGH1.2,,,
+"AVI_BEN1.1, AVI_BEN2.1",,1.09334609,Interconnection
+AVI_T1.T1,,,
+AVI_T2.T2,,,
+AVI_T3.T3,,,
+AVI_T4.T4,,,
+AVI_WTK.1,,0.19021570331775703,Interconnection
+BAL_GOR.1,,1.100534653026038,Connection
+BAL_HWB.1,,0.6478557197396201,Connection
+BAL_HWB.2,,0.5822500772343421,Interconnection
+"BAL_T1.T1, BAL_T2.T2",,0.0,Connection
+BDE_EDN.1,,0.1667892957069147,Connection
+BDE_GOR.1,,0.2115124565788863,Connection
+"BDE_T1.T1, BDE_T2.T2",,0.0,Connection
+BEN_HAY1.1,,,
+BEN_HAY2.1,,,
+BEN_OHB.1,,4.168856906112566,Interconnection
+BEN_OHC.1,,3.283435970301048,Interconnection
+BEN_T28.T28,,,
+BEN_T30.T30,,,
+BEN_T42.T42,,,
+BEN_T44.T44,,,
+BEN_T46.T46,,,
+BEN_TWZ.1,,4.126115214636519,Interconnection
+BLN_KIK.1,,1.7889185038847584,Interconnection
+BLN_KIK.2,,1.0669810661152417,Interconnection
+"BLN_STK1.1, BLN_STK2.1",,20.840198079999997,Interconnection
+"BLN_T1.T1, BLN_T2.T2, BLN_T3.T3",,0.0,Connection
+"BOB_HAM1.1, BOB_HAM2.1",,4.96537784,Interconnection
+BOB_MER.33,,,
+BOB_OTA1.1,,1.6554464312733446,Interconnection
+BOB_OTA1.2,,0.29019778078098474,Interconnection
+BOB_OTA2.1,,1.6554464312733446,Interconnection
+BOB_OTA2.2,,0.28360237667232596,Interconnection
+"BOB_T2.T2, BOB_T3.T3",,0.0,Connection
+"BPE_BRK1.1, BPE_BRK2.1",,6.86965843,Interconnection
+"BPE_HAY1.1, BPE_HAY2.1",,12.58854253,Interconnection
+BPE_MHO1.1,,0.66591239,Interconnection
+BPE_MHO2.1,,0.35087157,Interconnection
+BPE_MTR1.1,,0.8770054008955224,Interconnection
+BPE_PRM_HAY1.1,,,
+BPE_PRM_HAY1.2,,,
+BPE_PRM_HAY2.1,,,
+BPE_PRM_HAY2.2,,,
+BPE_T1.T1,,0.23683866999999997,Interconnection
+"BPE_T10.T10, BPE_T9.T9",,0.0,Connection
+"BPE_T15.T15, BPE_T16.T16",,0.0,Connection
+BPE_T2.T2,,0.12714219000000002,Interconnection
+BPE_T3.T3,,0.12221069999999999,Interconnection
+"BPE_TKU1.1, BPE_TKU2.1",,5.856601008329331,Interconnection
+BPE_TNG1.1,,0.9525435513725491,Interconnection
+BPE_TWC_LTN1.1,,0.9071756678612988,Interconnection
+BPE_TWC_LTN1.2,,0.7370802301373052,Interconnection
+BPE_TWC_LTN1.3,,0.18927839000000002,Connection
+"BPE_WDV1.1, BPE_WDV2.1",,0.9848427399999999,Interconnection
+BPE_WGN1.1,,3.401723437556818,Interconnection
+BPE_WGN1.2,,2.816263617443181,Interconnection
+BPE_WGN2.1,,3.401723437556818,Interconnection
+BPE_WGN2.2,,2.816263617443181,Interconnection
+BPE_WIL1.1,,1.644255897998604,Interconnection
+BPE_WIL1.2,,10.537817356138836,Interconnection
+BRB_HPI1.1,,8.134528567219467,Connection
+BRB_MDN.1,,0.02321056277502226,Connection
+"BRB_T2.T2, BRB_T3.T3",,0.0,Connection
+"BRK_SFD1.1, BRK_SFD2.1, BRK_SFD3.1",,6.0883141499999995,Interconnection
+BRK_T1.T1,,0.0,Connection
+BRY_ISL.1,,2.124451535,Interconnection
+"BRY_T2.T2, BRY_T3.T3",,,
+BRY_T4.T4,,,
+BRY_T5.T5,,0.0,Connection
+BRY_T6.T6,,0.0,Connection
+BRY_T7.T7,,0.0,Connection
+BWK_WPI.1,,,
+CBG_T3.T3,,0.0,Connection
+CBG_T4.T4,,0.0,Connection
+CLH_T1.T1,,0.0,Connection
+CML_FKN1.1,,0.0,Connection
+CML_FKN2.1,,0.0,Connection
+CML_T5A.T5A,,,
+CML_T5B.T5B,,,
+CML_T8.T8,,4.00096664,Interconnection
+COB_STK2.1,,0.0,Connection
+COB_STK2.2,,0.0,Connection
+"COB_T1.T1, COB_T2.T2",,,
+COB_UTK1.1,,0.0,Connection
+"COL_HOR2.1, COL_HOR3.1",,0.79771626,Interconnection
+COL_OTI1.1,,0.8832419931736527,Interconnection
+COL_OTI1.2,,1.298145705269461,Interconnection
+COL_OTI1.3,,0.44319260155688617,Interconnection
+COL_OTI2.1,,2.6245803,Interconnection
+COL_T1.T1,,,
+COL_T2.T2,,,
+COL_T6.T6,,0.0,Connection
+"CPK_T11.T11, CPK_T12.T12",,0.0,Connection
+CPK_T3.T3,,0.0,Connection
+CPK_T4.T4,,0.0,Connection
+CPK_T5.T5,,0.0,Connection
+CPK_WIL1.1,,0.0,Connection
+CPK_WWD_WIL2.1,,0.0,Connection
+CPK_WWD_WIL2.2,,0.0,Connection
+CPK_WWD_WIL2.3,,0.0,Connection
+CPK_WWD_WIL3.1,,0.0,Connection
+CPK_WWD_WIL3.2,,0.0,Connection
+CPK_WWD_WIL3.3,,0.0,Connection
+"CST_HUI1.1, CST_HUI2.1",,0.9579353,Interconnection
+CST_MNI1.1,,0.5789583064039409,Interconnection
+"CST_NPL1.1, CST_NPL2.1",,2.26823411,Interconnection
+CST_SFD1.1,,1.1243058177339902,Interconnection
+"CST_T2.T2, CST_T4.T4",,0.0,Connection
+CUL_T1.T1,,0.0,Connection
+CUL_T22.T22,,0.0,Connection
+CUL_T23.T23,,0.0,Connection
+"CYD_ROX1.1, CYD_ROX2.1",,14.635657890000001,Interconnection
+CYD_T1.T1,,,
+CYD_T2.T2,,,
+CYD_T3.T3,,,
+CYD_T4.T4,,,
+"CYD_T7.T7, CYD_T8.T8",,0.0,Connection
+CYD_TWZ1.1,,2.696172995952208,Interconnection
+CYD_TWZ1.2,,15.29133863404779,Interconnection
+CYD_TWZ2.1,,2.696172995952208,Interconnection
+CYD_TWZ2.2,,15.29133863404779,Interconnection
+DOB_GYM.1,,0.3083061190131579,Interconnection
+DOB_RFN_IGH2.1,,15.93518387,Interconnection
+DOB_RFN_IGH2.2,,1.5959091799999998,Interconnection
+DOB_RFN_IGH2.3,,1.5959091799999998,Interconnection
+"DOB_T1.T1, DOB_T2.T2",,0.0,Connection
+DOB_T11.T11,,2.9362242000000003,Interconnection
+DOB_T12.T12,,1.2582588900000002,Interconnection
+"DRY_GLN1.1, DRY_GLN2.1",,,
+DRY_HLY1.1,,,
+DRY_OTA1.1,,,
+DRY_OTA1.2,,,
+DVK_T1.T1,,0.0,Connection
+DVK_T2.T2,,0.0,Connection
+DVK_WDV1.1,,0.2772730929277219,Interconnection
+DVK_WDV2.1,,0.23352237145945948,Interconnection
+DVK_WPW1.2,,0.633575714757548,Interconnection
+DVK_WPW2.2,,0.5178574811531531,Interconnection
+"EDG_KAW1.1, EDG_KAW2.1",,1.45584537,Interconnection
+EDG_KAW3.1,,1.7045005397188753,Interconnection
+EDG_MAT2.1,,,
+EDG_OWH.1,,1.3501814251561104,Interconnection
+EDG_T4.T4,,0.23081379999999999,Interconnection
+EDG_T5.T5,,0.08234888,Interconnection
+EDG_T7.T7,,0.0,Connection
+EDG_T8.T8,,0.0,Connection
+"EDG_TRK1.1, EDG_TRK2.1",,6.15307748,Interconnection
+EDG_WAI2.1,,0.0,Connection
+EDN_INV.1,,0.472288727714199,Interconnection
+"EDN_T1.T1, EDN_T2.T2",,0.0,Connection
+"FHL_RDF1.1, FHL_RDF2.1",,0.70908191,Interconnection
+"FHL_T1.T1, FHL_T2.T2",,0.0,Connection
+FHL_TUI1.1,,0.03309181,Interconnection
+"FKN_T2A.T2A, FKN_T2B.T2B",,,
+FKN_T4.T4,,0.0,Connection
+GFD_HAY1.1,,0.0,Connection
+GFD_HAY2.1,,0.0,Connection
+GFD_T5.T5,,0.0,Connection
+GFD_T6.T6,,0.0,Connection
+GIS_T2.T2,,0.0,Connection
+GIS_T4.T4,,0.0,Connection
+"GIS_TUI1.1, GIS_TUI2.1",,0.31348541999999996,Connection
+"GLN_T4.T4, GLN_T5.T5",,0.0,Connection
+GLN_T6.T6,,0.0,Connection
+GLN_TG.TG,,,
+GOR_ROX.1,,1.49785081,Interconnection
+"GOR_T2.T2, GOR_T3.T3",,0.0,Connection
+GYM_KUM.1,,,
+"GYM_T1.T1, GYM_T2.T2",,,
+GYT_T2.T2,,0.0,Connection
+GYT_T3.T3,,0.0,Connection
+HAM_KPO1.1,,0.0,
+HAM_KPO1.2,,,
+HAM_KPO2.1,,0.0,
+HAM_KPO2.2,,,
+HAM_OHW1.1,,2.318978676722116,Interconnection
+HAM_PAO_WHU1.1,,,
+HAM_PAO_WHU1.2,,,
+HAM_PAO_WHU1.3,,0.0,Connection
+HAM_PAO_WHU2.1,,,
+HAM_PAO_WHU2.2,,,
+HAM_PAO_WHU2.3,,0.0,Connection
+"HAM_T1.T1, HAM_T2.T2",,0.0,Connection
+"HAM_T4.T4, HAM_T5.T5",,0.0,Connection
+"HAM_T6.T6, HAM_T9.T9",,4.257988149999999,Interconnection
+HAM_T8.T8,,0.0,Connection
+HAM_WKM.1,,4.201064251891329,Interconnection
+HAY_BEN1.1,,,
+HAY_BEN2.1,,,
+HAY_LTN1.1,,9.112486947114085,Interconnection
+HAY_MLG1.1,,0.0,Connection
+HAY_MLG2.1,,0.0,Connection
+HAY_R34.1,,,
+HAY_T1.T1,,1.57263943,Interconnection
+HAY_T11.T11,,0.0,Connection
+HAY_T12.T12,,0.0,Connection
+HAY_T16.T16,,0.07604715,Interconnection
+HAY_T2.T2,,1.6511423600000001,Interconnection
+HAY_T23.T23,,,
+HAY_T25.T25,,,
+HAY_T5.T5,,1.5505863899999999,Interconnection
+"HAY_TKR1.1, HAY_TKR2.1",,7.207837759999999,Interconnection
+"HAY_UHT1.1, HAY_UHT2.1",,1.1148236,Interconnection
+HAY_WIL1.1,,3.058083760749874,Interconnection
+HBK_T5.T5,,,
+"HEN_HEP1.1, HEN_HEP2.1, HEN_HEP3.1, HEN_HEP4.1",,1.5239777103349281,Interconnection
+HEN_HPI1.1,,0.9245540838717198,Interconnection
+HEN_MPE1.1,,1.9611892620542921,Interconnection
+HEN_MPE1.2,,0.802047053701394,Interconnection
+HEN_MPE1.3,,1.099626349244314,Interconnection
+HEN_MPE2.1,,1.9611892620542921,Interconnection
+HEN_MPE2.2,,0.802047053701394,Interconnection
+HEN_MPE2.3,,1.099626349244314,Interconnection
+HEN_OTA.1,,4.262988795000001,Interconnection
+HEN_SWN.1,,3.4705101087500005,Interconnection
+HEN_T1.T1,,0.94898086,Interconnection
+"HEN_T2.T2, HEN_T3.T3",,0.0,Connection
+HEN_T5.T5,,0.76871056,Interconnection
+"HEP_ROS1.1, HEP_ROS2.1",,1.3336825296650718,Interconnection
+"HEP_T1.T1, HEP_T2.T2, HEP_T3.T3",,0.0,Connection
+HIN_KPO.1,,0.0,Connection
+"HIN_T1.T1, HIN_T2.T2",,0.0,Connection
+HKK_KUM1.1,,0.3768975631541218,Interconnection
+HKK_OTI2.1,,1.881520118422939,Interconnection
+"HKK_T1.T1, HKK_T2.T2",,,
+"HLY_OHW1.1, HLY_OHW2.1",,4.87034352,Interconnection
+HLY_OTA2.1,,8.644304021284404,Interconnection
+HLY_OTA2.2,,1.454057312222222,Interconnection
+HLY_SFD.1,,23.2247569282489,Interconnection
+HLY_T1.T1,,,
+HLY_T2.T2,,,
+"HLY_T21.T21, HLY_T22.T22",,0.0,Connection
+HLY_T4.T4,,,
+HLY_T500.T500,,,
+HLY_TWH1.1,,2.5360096852942897,Interconnection
+"HOB_LST1.1, HOB_LST2.1",,,
+HOB_LST3.1,,,
+HOB_LST4.1,,,
+HOB_PEN1.1,,89.585614653,Interconnection
+"HOB_QST1.1, HOB_QST2.1, HOB_QST3.1",,,
+HOB_T12.T12,,0.0,Connection
+HOB_T3.T3,,,
+HOB_T4.T4,,,
+HOB_T5.T5,,,
+HOB_WRD1.1,,88.81836283000001,Interconnection
+HOR_KBY_ISL1.1,,,
+HOR_KBY_ISL1.2,,,
+HOR_KBY_ISL1.3,,0.0,Connection
+HOR_KBY_ISL2.1,,,
+HOR_KBY_ISL2.2,,,
+HOR_KBY_ISL2.3,,,
+"HOR_T5.T5, HOR_T8.T8",,0.0,Connection
+HPI_MDN1.1,,8.242844526836238,Interconnection
+"HTI_T1.T1, HTI_T2.T2",,0.0,Connection
+HUI_MNI1.1,,0.14018901,Interconnection
+"HUI_T5.T5, HUI_T6.T6",,0.0,Connection
+HWA_PTA.1,,,
+HWA_SFD1.1,,5.1962458943784275,Interconnection
+"HWA_T1.T1, HWA_T2.T2",,0.0,Connection
+HWA_T3.T3,,0.0,Connection
+"HWA_WAA1.1, HWA_WAA2.1",,,
+HWA_WVY1.1,,6.921791700813528,Interconnection
+HWB_PAL1.1,,,
+"HWB_ROX1.1, HWB_ROX2.1",,0.79924691,Interconnection
+HWB_SDN.1,,0.6489318406666665,Interconnection
+HWB_T1.T1,,0.0,Connection
+HWB_T2.T2,,0.0,Connection
+HWB_T4.T4,,0.5866073300000001,Interconnection
+HWB_T5.T5,,0.0,Connection
+HWB_TMH.1,,0.2549375088333333,Interconnection
+"HWB_WPIA.1, HWB_WPIB.1, HWB_WPIC.1",,,
+IGH_KIK1.1,,0.8112011919581956,Interconnection
+IGH_KIK1.2,,1.165693938041804,Interconnection
+IGH_KIK2.1,,7.4425706,Interconnection
+IGH_WMG1.1,,0.0,Connection
+IGH_WMG2.1,,0.0,Connection
+INV_MAN.1,,11.378710380000001,Interconnection
+INV_NMA.1,,,
+"INV_ROX1.1, INV_ROX2.1",,15.01815753,Interconnection
+INV_T1.T1,,0.22678424,Interconnection
+"INV_T3.T3, INV_T5.T5",,0.0,Connection
+"INV_TWI1.1, INV_TWI2.1",,2.3833040299999997,Interconnection
+ISL_KIK1.1,,3.3981398000000005,Interconnection
+ISL_KIK2.1,,4.536419616869694,Interconnection
+ISL_KIK2.2,,2.9564031418336167,Interconnection
+ISL_KIK2.3,,10.27576347129669,Interconnection
+ISL_KIK3.1,,4.536419616869694,Interconnection
+ISL_KIK3.2,,2.9564031418336167,Interconnection
+ISL_KIK3.3,,10.27576347129669,Interconnection
+ISL_LIV.1,,26.568083945593173,Interconnection
+"ISL_SBK1.1, ISL_SBK2.1",,0.20607465,Interconnection
+"ISL_SPN1.1, ISL_SPN2.1",,,
+"ISL_T1.T1, ISL_T2.T2",,0.0,Connection
+ISL_T3.T3,,0.72542838,Interconnection
+ISL_T6.T6,,1.9750193900000002,Interconnection
+ISL_T7.T7,,0.5312663200000001,Interconnection
+ISL_TKB.1,,17.87435182698795,Interconnection
+KAG_GEN.1,,,
+"KAG_T1.T1, KAG_T2.T2",,,
+"KAI_SBK1.1, KAI_SBK2.1",,0.0,Connection
+"KAI_T1.T1, KAI_T2.T2",,0.0,Connection
+"KAW_MAT1.1, KAW_MAT2.1",,0.0,Connection
+KAW_OHK.1,,7.446366180281124,Interconnection
+KAW_ONU1.1,,,
+KAW_ONU2.1,,,
+KAW_ONU3.1,,,
+KAW_ONU4.1,,,
+"KAW_T1.T1, KAW_T2.T2",,0.0,Connection
+"KAW_T11.T11, KAW_T14.T14",,0.0,Connection
+KAW_T12.T12,,1.10398579,Interconnection
+KAW_T13.T13,,0.67066601,Interconnection
+"KAW_T6.T6, KAW_T7.T7, KAW_T8.T8, KAW_T9.T9",,0.0,Connection
+KBY_T1.T1,,,
+KBY_T2.T2,,,
+KEN_MPE1.1,,0.0,Connection
+KEN_MPE2.1,,0.0,Connection
+KEN_T1.T1,,0.0,Connection
+KEN_T2.T2,,0.0,Connection
+"KIK_STK1.1, KIK_STK2.1",,8.5364693,Interconnection
+KIK_STK3.1,,1.65020359,Interconnection
+KIK_T1.T1,,0.25373745000000003,Interconnection
+KIK_T2.T2,,4.368437190000001,Interconnection
+KILN_COGEN.1,,,
+"KIN_T1A.T1A, KIN_T2.T2",,0.0,Connection
+"KIN_T3A.T3A, KIN_T3B.T3B",,0.0,Connection
+KIN_T4.T4,,0.0,Connection
+KIN_T5.T5,,0.0,Connection
+KIN_TRK1.1,,0.4592543035263157,Interconnection
+KIN_TRK1.2,,1.13349399815444,Interconnection
+KIN_TRK2.1,,0.2545380803524229,Interconnection
+KIN_TRK2.2,,1.3833746208422673,Interconnection
+KMI_T1.T1,,,
+KMI_TGA1.1,,,
+KMO_MTM_TGA2.1,,0.23190491875,Interconnection
+KMO_MTM_TGA2.2,,0.3092065583333334,Interconnection
+KMO_MTM_TGA2.3,,0.64945738,Interconnection
+KMO_MTM1.1,,1.40123867,Interconnection
+KMO_T1.T1,,0.0,Connection
+KMO_T2.T2,,4.5071629699999995,Interconnection
+KMO_T4.T4,,4.4771256500000005,Interconnection
+KMO_TGA1.1,,0.5720321329166668,Interconnection
+KMO_TMI1.1,,0.67601136,Interconnection
+"KMO_TRK1.1, KMO_TRK2.1",,6.52542094,Interconnection
+KOE_KTA1.1,,,
+"KOE_MPE1.1, KOE_MPE2.1",,0.0,Connection
+KOE_T2.T2,,,
+KOE_T3.T3,,,
+KPI_T1.T1,,,
+KPO_T1.T1,,,
+KPO_T2.T2,,,
+KPO_T3.T3,,,
+KPO_TMU.1,,0.0,Connection
+KPU_T3.T3,,0.0,Connection
+KPU_T4.T4,,0.0,Connection
+KPU_WKO1.1,,0.0,Connection
+KPU_WKO2.1,,0.0,Connection
+"KTA_T4.T4, KTA_T5.T5",,,
+KUM_OTI.1,,1.881520118422939,Interconnection
+KUM_T1.T1,,,
+KWA_T2.T2,,0.0,Connection
+KWA_T3.T3,,0.0,Connection
+KWA_WIL1.1,,0.0,Connection
+KWA_WIL2.1,,0.0,Connection
+LFD_T1.T1,,,
+LFD_T2.T2,,,
+LIV_NSY.1,,5.364816280593176,Interconnection
+LIV_WTK.1,,0.7245294766822431,Interconnection
+"LST_PEN1.1, LST_PEN2.1",,,
+LST_QST1.1,,,
+LST_ROS1.2,,,
+"LST_T1.T1, LST_T2.T2, LST_T3.T3",,,
+LTN_T2.T2,,0.0,Connection
+LTN_T3.T3,,0.0,Connection
+"MAN_NMA1.1, MAN_NMA2.1, MAN_NMA3.1",,,Interconnection
+MAN_T1.T1,,,
+MAN_T2.T2,,,
+MAN_T3.T3,,,
+MAN_T4.T4,,,
+MAN_T5.T5,,,
+MAN_T6.T6,,,
+MAN_T7.T7,,,
+"MAN_T8.T8, MAN_T9.T9",,,
+MAT_T1.T1,,,
+MAT_T2.T2,,,
+MCH_T1.T1,,0.0,Connection
+"MDN_MPE1.1, MDN_MPE2.1",,3.61344486,Interconnection
+MDN_T5.T5,,3.08341041,Interconnection
+MDN_T6.T6,,3.25288919,Interconnection
+MGM_MST1.1,,9.73208361,Interconnection
+"MGM_T2.T2, MGM_T3.T3",,0.0,Connection
+MGM_WDV1.1,,4.71810183,Interconnection
+MHO_T1.T1,,,
+MHO_T3.T3,,0.0,Connection
+MHO_T4.T4,,0.0,Connection
+MKE_T1.T1,,,
+MKE_T2.T2,,,
+MLG_T1.T1,,0.0,Connection
+MLG_T2.T2,,0.0,Connection
+MLG_T3.T3,,0.0,Connection
+MLG_T4.T4,,0.0,Connection
+"MNG_OTA1.1, MNG_OTA2.1",,0.6851589299999999,Interconnection
+"MNG_ROS1.1, MNG_ROS2.1",,1.31785172,Interconnection
+"MNG_T1.T1, MNG_T2.T2",,0.0,Connection
+MNI_MKE_SFD1.1,,,
+MNI_MKE_SFD1.2,,,
+MNI_MKE_SFD1.3,,0.0,Connection
+"MNI_T3.T3, MNI_T4.T4",,0.0,Connection
+MOK_T1.T1,,,
+MOK_T2.T2,,,
+MOK_WKM.1,,,
+MOT_T5.T5,,0.0,Connection
+MOT_T6.T6,,0.0,Connection
+MPI_T3.T3,,,
+MPI_UTK.1,,0.0,Connection
+"MST_T2.T2, MST_T3.T3",,0.0,Connection
+MST_UHT1.1,,0.17808363857142856,Interconnection
+MST_UHT1.2,,0.2374448514285714,Interconnection
+MST_UHT2.1,,0.17808363857142856,Interconnection
+MST_UHT2.2,,0.2374448514285714,Interconnection
+MTI_T1.T1,,,
+MTI_T10.T10,,,
+MTI_T2.T2,,,
+MTI_T3.T3,,,
+MTI_T4.T4,,,
+MTI_T5.T5,,,
+MTI_T6.T6,,,
+MTI_T7.T7,,,
+MTI_T8.T8,,,
+MTI_T9.T9,,,
+"MTI_WKM1.1, MTI_WKM2.1",,0.0,Connection
+MTI_WPA.1,,0.0,Connection
+"MTM_T1.T1, MTM_T3.T3",,0.0,Connection
+MTN_T1.T1,,0.0,Connection
+MTN_T2.T2,,0.0,Connection
+MTO_T1.T1,,0.0,Connection
+MTO_T2.T2,,0.0,Connection
+MTR_OKN1.1,,0.4875008805543709,Interconnection
+MTR_T2.T2,,0.0,Connection
+NAP_NTM1.1,,,
+NAP_OKI2.1,,,
+NAP_T1.T1,,,
+NAP_WRK2.1,,,
+"NMA_T1.T1, NMA_T2.T2",,0.0,Connection
+"NMA_TMH1.1, NMA_TMH2.1",,17.49815546,Interconnection
+"NMA_TWI1.1, NMA_TWI2.1",,3.664623002124629,Interconnection
+NPK_T1.T1,,0.0,Connection
+"NPL_SFD1.1, NPL_SFD2.1",,7.52733076,Interconnection
+"NPL_T6.T6, NPL_T7.T7",,0.0,Connection
+NPL_T8.T8,,0.43829658,Interconnection
+NSY_PRU1.1,,,
+NSY_ROX.1,,10.473635103813647,Interconnection
+"NSY_T1.T1, NSY_T2.T2",,0.0,Connection
+NTM_T1.T1,,,
+NTM_T2.T2,,,
+OAM_BPT_WTK1.1,,0.1624153511639344,Connection
+OAM_BPT_WTK1.2,,0.22763726383606558,Interconnection
+OAM_BPT_WTK1.3,,0.0,Connection
+OAM_STU_WTK2.1,,0.0,Connection
+OAM_STU_WTK2.2,,0.3107632309672131,Interconnection
+OAM_STU_WTK2.3,,0.606181515460993,Interconnection
+OAM_STU_WTK2.4,,0.07928938403278689,Connection
+OAM_T1.T1,,0.0,Connection
+OAM_T2.T2,,0.0,Connection
+OHA_T4.T4,,,
+OHA_T5.T5,,,
+OHA_T6.T6,,,
+OHA_T7.T7,,,
+"OHA_TWZ1.1, OHA_TWZ2.1",,0.0,Connection
+OHB_T10.T10,,,
+OHB_T11.T11,,,
+OHB_T8.T8,,,
+OHB_T9.T9,,,
+OHB_TWZ.1,,0.49190051989528805,Interconnection
+OHC_T12.T12,,,
+OHC_T13.T13,,,
+OHC_T14.T14,,,
+OHC_T15.T15,,,
+OHC_TWZ.1,,1.4511065336910998,Interconnection
+OHK_T1.T1,,,
+OHK_T2.T2,,,
+OHK_T3.T3,,,
+OHK_T4.T4,,,
+OHK_WRK.1,,0.5123732940740741,Interconnection
+OHW_OTA1.1,,2.622984633497899,Interconnection
+OHW_OTA2.1,,2.622984633497899,Interconnection
+OHW_WKM1.1,,4.288198944390756,Interconnection
+OKE_OWH.1,,0.08651271164084261,Interconnection
+OKE_TMI.1,,0.43107718,Interconnection
+OKE_TRK.1,,0.7120283113716815,Interconnection
+OKI_T1.T1,,,
+OKI_T2.T2,,,
+OKI_T5.T5,,,
+OKI_WRK1.1,,0.0,Connection
+OKN_ONG1.1,,0.3510502524093817,Interconnection
+OKN_ONG1.2,,0.6115469061407248,Interconnection
+OKN_ONG1.3,,0.0,Connection
+OKN_T1.T1,,0.0,Connection
+ONG_T1.T1,,0.0,Connection
+OPK_KPI_SFD2.1,,,
+OPK_KPI_SFD2.2,,0.0,
+OPK_KPI_SFD2.3,,,
+OPK_SFD1.1,,0.0,
+OPK_T4.T4,,0.0,Connection
+OPK_T5.T5,,0.0,Connection
+OTA_PAK3.1,,,
+OTA_PAK4.1,,,
+OTA_PEN2.1,,7.97019357,Interconnection
+OTA_PEN5.1,,5.506409110000001,Interconnection
+OTA_PEN6.1,,5.506409110000001,Interconnection
+"OTA_ROS1.1, OTA_ROS2.1",,17.62017333,Interconnection
+OTA_SWN.1,,0.7924786862500002,Interconnection
+"OTA_T11.T11, OTA_T12.T12",,0.0,Connection
+OTA_T2.T2,,0.09284550999999999,Interconnection
+OTA_T3.T3,,2.5650630800000003,Interconnection
+OTA_T4.T4,,0.15097322999999999,Interconnection
+OTA_T5.T5,,2.6913567599999997,Interconnection
+OTA_TIE3.1,,,
+"OTA_TIE4.1, OTA_TIE5.1",,,
+"OTA_WKM1.1, OTA_WKM2.1",,8.32901659,Interconnection
+OTC_GEN.1,,,
+OTC_T1.T1,,,
+OTI_T6.T6,,0.0,Connection
+"OWH_T1.T1, OWH_T2.T2",,0.0,Connection
+PAK_PEN3.1,,,
+"PAK_T1.T1, PAK_T2.T2, PAK_T3.T3",,0.0,Connection
+PAK_WKM1.1,,72.54130292,Not connected
+PAK_WKM1.2,,295.46235641500004,Interconnection
+PAK_WKM2.1,,72.40611912,Interconnection
+PAK_WKM2.2,,295.46235641500004,Interconnection
+PAL_T1.T1,,,
+PEN_R862.1,,,
+PEN_T10.T10,,1.4436051,Interconnection
+"PEN_T11.T11, PEN_T7.T7, PEN_T9.T9",,0.0,Connection
+"PEN_T21.T21, PEN_T22.T22, PEN_T23.T23",,0.0,Connection
+PEN_T5.T5,,0.0,Connection
+PEN_T6.T6,,4.75846544,Interconnection
+PNI_T1.T1,,0.0,Connection
+PNI_T2.T2,,0.0,Connection
+PPI_T1.T1,,,
+PPI_THI1.1,,0.0,Connection
+PRM_PNI_TKR1.1,,0.919475715311112,Interconnection
+PRM_PNI_TKR1.2,,0.09455142748858449,Interconnection
+PRM_PNI_TKR2.1,,0.919475715311112,Interconnection
+PRM_PNI_TKR2.2,,0.09455142748858449,Interconnection
+PRM_T3.T3,,0.0,Connection
+PRM_T4.T4,,0.0,Connection
+PRU_T1.T1,,,
+PTA_T1.T1,,,
+QST_T3A.T3A,,,
+RDF_T1.T1,,0.0,Connection
+"RDF_T1.T1, RDF_T2.T2",,0.0,Connection
+"RDF_T3.T3, RDF_T4.T4",,1.37547607,Interconnection
+"RDF_TUI1.1, RDF_TUI2.1",,6.31129649,Interconnection
+RDF_WHI1.1,,1.178110465,Interconnection
+RDF_WRK.1,,11.73308289,Interconnection
+RDF_WTU1.1,,0.0,Connection
+RDF_WTU2.1,,0.0,Connection
+RKA_T1.T1,,,
+RKA_WRK1.1,,,
+"ROS_T2.T2, ROS_T3.T3, ROS_T4.T4",,0.0,Connection
+ROT_T2.T2,,0.0,Connection
+"ROT_T3.T3, ROT_T4.T4",,0.0,Connection
+ROT_T5.T5,,0.0,Connection
+ROT_TRK1.1,,0.0,Connection
+ROT_TRK2.1,,0.0,Connection
+ROT_WHE1.1,,,
+ROX_T1.T1,,,
+ROX_T10.T10,,4.57752546,Interconnection
+ROX_T2.T2,,,
+ROX_T3.T3,,,
+ROX_T4.T4,,,
+ROX_T5.T5,,,
+ROX_T6.T6,,,
+ROX_T7.T7,,,
+ROX_T8.T8,,,
+"ROX_TMH1.1, ROX_TMH2.1",,10.243065,Interconnection
+RPO_T5.T5,,,
+RPO_T6.T6,,,
+RPO_TNG1.1,,0.39249607947712417,Interconnection
+RPO_WRK1.1,,0.6378061291503269,Interconnection
+"SBK_T1.T1, SBK_T2.T2",,0.0,Connection
+SBK_WPR.1,,0.04261493038067351,Interconnection
+"SDN_T1.T1, SDN_T2.T2",,0.0,Connection
+SDN_TMH.1,,0.48669888050000004,Interconnection
+SFD_SPL.1,,,
+SFD_T10.T10,,0.74268337,Interconnection
+SFD_T21.T21,,,
+SFD_T22.T22,,,
+"SFD_T6.T6, SFD_T8.T8",,,Connection
+SFD_TMN1.1,,7.80112507,Interconnection
+SPL_T10.T10,,,
+"SPN_T1.T1, SPN_T2.T2",,,
+"STK_T10.T10, STK_T6.T6",,0.0,Connection
+STK_T3.T3,,0.0,Connection
+STK_T7.T7,,3.3410047599999997,Interconnection
+STK_UTK1.1,,0.0,Connection
+STK_UTK1.2,,0.0,Connection
+"STU_T5.T5, STU_T6.T6",,0.0,Connection
+STU_TIM.1,,1.3363547045390072,Interconnection
+SVL_T1.T1,,0.0,Connection
+SVL_T2.T2,,0.0,Connection
+SWN_T1A.T1A,,,
+SWN_T1B.T1B,,,
+SWN_T2.T2,,0.0,Connection
+TAA_T1.T1,,,
+TAA_WRK1.1,,,
+TAK_T5.T5,,0.0,Connection
+TAK_T8.T8,,0.0,Connection
+"TGA_T1.T1, TGA_T2.T2",,0.0,Connection
+"TGA_T3.T3, TGA_T4.T4",,0.0,Connection
+THI_T1.T1,,,
+THI_T2.T2,,,
+THI_WKM1.1,,67.075931709,Interconnection
+THI_WRK1.1,,7.4528813010000015,Interconnection
+"TIM_T2.T2, TIM_T4.T4, TIM_T6.T6",,0.0,Connection
+TIM_T5.T5,,1.2430041699999999,Interconnection
+TIM_T8.T8,,1.24269004,Interconnection
+TIM_TKA.1,,0.0,Connection
+TIM_TKA.2,,0.0,Connection
+TIM_TMK1.1,,0.0,Connection
+TIM_TMK2.1,,0.0,Connection
+TKA_T1.T1,,0.0,Connection
+TKA_T6.T6,,0.0,Connection
+TKB_T2.T2,,,
+TKB_T3.T3,,,
+TKB_TWZ.1,,2.1514069783755287,Interconnection
+TKH_T1.T1,,,
+TKH_WAI1.1,,,
+"TKR_T1.T1, TKR_T2.T2",,0.0,Connection
+"TKR_WIL1.1, TKR_WIL2.1",,8.80966732,Interconnection
+TKU_T1.T1,,,
+TKU_T2.T2,,,
+TKU_T21.T21,,0.0,Connection
+TKU_T3.T3,,,
+TKU_T4.T4,,,
+"TKU_WKM1.1, TKU_WKM2.1",,2.4028817316706688,Interconnection
+"TMI_T1.T1, TMI_T2.T2",,0.0,Connection
+TMK_T1.T1,,0.0,Connection
+TMK_T2.T2,,0.0,Connection
+"TMN_T5.T5, TMN_T8.T8",,0.0,Connection
+TMN_TWH1.1,,12.860547336456808,Interconnection
+"TMU_T1.T1, TMU_T2.T2",,0.0,Connection
+"TNG_T11.T11, TNG_T12.T12",,0.0,Connection
+"TNG_T2.T2, TNG_T3.T3",,0.0,Connection
+TRC_T1.T1,,,
+TRC_T2.T2,,,
+TRC_TWH.1,,,
+TRK_T1.T1,,0.40973474,Interconnection
+TRK_T2.T2,,,
+TRK_T3.T3,,0.34147764,Interconnection
+TRK_T4.T4,,0.0,Connection
+TUI_T1.T1,,,
+TUI_T15.T15,,0.0,Connection
+TUI_T2.T2,,,
+TUI_T3.T3,,,
+TUI_T4.T4,,,
+TUI_T5.T5,,,
+TUI_T6.T6,,,
+TUI_T7.T7,,,
+TUI_WRA1.1,,0.0,Connection
+TUI_WRA2.1,,0.0,Connection
+"TWH_T1.T1, TWH_T2.T2",,0.0,Connection
+"TWZ_T18.T18, TWZ_T19.T19",,0.0,Connection
+"UHT_T1.T1, UHT_T2.T2",,0.0,Connection
+"WAA_T2.T2, WAA_T4.T4",,,
+WAA_T3.T3,,,
+"WAI_T1.T1, WAI_T2.T2",,0.0,Connection
+WAI_T5.T5,,0.0,Connection
+"WDV_T1.T1, WDV_T2.T2",,0.0,Connection
+WEL_T1.T1,,0.0,Connection
+WEL_T2.T2,,0.0,Connection
+"WGN_T1.T1, WGN_T2.T2",,0.0,Connection
+WGN_WVY1.1,,9.333634134808044,Interconnection
+WHE_T1.T1,,,
+"WHI_T1.T1, WHI_T2.T2, WHI_T3.T3",,0.0,Connection
+WHI_WRK1.1,,10.554972425,Interconnection
+"WHU_T1.T1, WHU_T2.T2, WHU_T3.T3",,0.0,Connection
+"WHU_WKO1.1, WHU_WKO2.1",,0.0,Connection
+"WIL_T3.T3, WIL_T5.T5",,0.0,Connection
+WIL_T8.T8,,5.37103892,Interconnection
+WIR_T1.T1,,0.0,Connection
+WIR_T2.T2,,0.0,Connection
+WKM_T1.T1,,,
+WKM_T2.T2,,,
+WKM_T3.T3,,,
+WKM_T4.T4,,,
+WKM_T8.T8,,,
+WKM_T9.T9,,,
+"WKM_TIE1.1, WKM_TIE2.1",,,
+WKM_WRK1.1,,74.52881301000001,Interconnection
+"WKO_T1.T1, WKO_T2.T2",,0.0,Connection
+WMG_WPT1.1,,0.0,Connection
+WMG_WPT1.2,,0.0,Connection
+WMG_WPT1.3,,,
+WMG_WPT2.1,,0.0,Connection
+WMG_WPT2.2,,0.0,Connection
+WMG_WPT2.3,,,
+WPA_T1.T1,,,
+WPR_T12.T12,,1.46557065,Interconnection
+WPR_T13.T13,,1.4484003199999997,Interconnection
+WPR_T3.T3,,0.0,Connection
+WPT_T1.T1,,0.0,Connection
+WPT_T2.T2,,0.0,Connection
+WPW_T1.T1,,0.0,Connection
+WPW_T2.T2,,0.0,Connection
+WRA_T1.T1,,0.0,Connection
+WRA_T2.T2,,0.0,Connection
+WRD_T1.T1,,,
+WRD_T2.T2,,,
+WRD_T3.T3,,,
+WRD_T7.T7,,0.0,Connection
+WRK_T1.T1,,,
+WRK_T2.T2,,,
+WRK_T29.T29,,0.0,Connection
+WRK_T3.T3,,,
+WRK_T30.T30,,0.0,Connection
+WRK_T4.T4,,,
+"WTK_T21.T21, WTK_T22.T22",,0.0,Connection
+WTK_T23.T23,,0.29795295,Interconnection
+WTK_T24.T24,,0.29523581,Interconnection
+WTK_T28.T28,,0.0,Connection
+WTU_T3.T3,,0.0,Connection
+WTU_T4.T4,,0.0,Connection
+WVY_T1.T1,,0.0,Connection
+ABY,,,
+ADD,,,
+ALB,,,
+APS,,,
+ARA,,,
+ARG,,,
+ARI,,,
+ASB,,,
+ASY,,,
+ATI,,,
+ATU,,,
+AVI,,,
+BAL,,,
+BDE,,,
+BEN,,,
+BHL,,,
+BLN,,,
+BOB,,,
+BPC,,,
+BPD,,,
+BPE,,,
+BPT,,,
+BRB,,,
+BRK,,,
+BRY,,,
+BWK,,,
+CBG,,,
+CLH,,,
+CML,,,
+COB,,,
+COL,,,
+CPK,,,
+CST,,,
+CUL,,,
+CYD,,,
+DOB,,,
+DRY,,,
+DVK,,,
+EDG,,,
+EDN,,,
+FHL,,,
+FKN,,,
+GFD,,,
+GIS,,,
+GLN,,,
+GNY,,,
+GOR,,,
+GYM,,,
+GYT,,,
+HAM,,,
+HAY,,,
+HEN,,,
+HEP,,,
+HIN,,,
+HKK,,,
+HLY,,,
+HOB,,,
+HOR,,,
+HPI,,,
+HTI,,,
+HUI,,,
+HWA,,,
+HWB,,,
+IGH,,,
+INV,,,
+ISL,,,
+KAI,,,
+KAW,,,
+KBT,,,
+KBY,,,
+KEN,,,
+KIK,,,
+KIN,,,
+KMO,,,
+KOE,,,
+KPA,,,
+KPO,,,
+KPU,,,
+KUM,,,
+KWA,,,
+LFD,,,
+LIV,,,
+LTN,,,
+MAN,,,
+MAT,,,
+MCH,,,
+MDN,,,
+MER,,,
+MGM,,,
+MHO,,,
+MHT,,,
+MKE,,,
+MKT,,,
+MLG,,,
+MLN,,,
+MLT,,,
+MNG,,,
+MNI,,,
+MOT,,,
+MPE,,,
+MPI,,,
+MST,,,
+MTI,,,
+MTM,,,
+MTN,,,
+MTO,,,
+MTR,,,
+MVE,,,
+NAP,,,
+NGA,,,
+NMA,,,
+NPK,,,
+NPL,,,
+NSY,,,
+OAM,,,
+OHA,,,
+OHB,,,
+OHC,,,
+OHK,,,
+OHW,,,
+OKE,,,
+OKI,,,
+OKN,,,
+ONG,,,
+OPI,,,
+OPK,,,
+ORO,,,
+OTA,,,
+OTI,,,
+OWH,,,
+PAK,,,
+PAL,,,
+PAO,,,
+PEN,,,
+PIE,,,
+PNI,,,
+PPI,,,
+PRM,,,
+PRT,,,
+RDF,,,
+RFC,,,
+RFN,,,
+ROS,,,
+ROT,,,
+ROX,,,
+RPO,,,
+RTO,,,
+RTR,,,
+SBK,,,
+SDN,,,
+SFD,,,
+SPN,,,
+STK,,,
+STU,,,
+SVL,,,
+SWN,,,
+TAK,,,
+TGA,,,
+THI,,,
+TIM,,,
+TKA,,,
+TKB,,,
+TKH,,,
+TKR,,,
+TKU,,,
+TMH,,,
+TMI,,,
+TMK,,,
+TMN,,,
+TMU,,,
+TNG,,,
+TRK,,,
+TUI,,,
+TWC,,,
+TWH,,,
+TWI,,,
+TWT,,,
+TWZ,,,
+UHT,,,
+UTK,,,
+WAI,,,
+WDV,,,
+WEL,,,
+WGN,,,
+WHI,,,
+WHU,,,
+WIL,,,
+WIR,,,
+WKM,,,
+WKO,,,
+WMG,,,
+WPA,,,
+WPR,,,
+WPT,,,
+WPW,,,
+WRA,,,
+WRD,,,
+WRK,,,
+WTK,,,
+WTU,,,
+WVY,,,
+WWD,,,

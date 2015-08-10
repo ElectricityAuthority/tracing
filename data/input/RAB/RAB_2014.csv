@@ -550,7 +550,7 @@ WPRLAND,Substation,WPR,I,Interconnection,263607.83
 WPTLAND,Substation,WPT,I,Connection,0.0
 WPWLAND,Substation,WPW,I,Interconnection,35800.0
 WRALAND,Substation,WRA,I,Connection,0.0
-WRKWKMCE,Transmission Line,WRK_WKMC,I,Interconnection,19619187.29
+WRKWKMCE,Transmission Line,WRK_WKMC,I,Interconnection,140000000.00
 WTKLAND,Substation,WTK,I,Interconnection,29500.0
 WTULAND,Substation,WTU,I,Connection,0.0
 WVYLAND,Substation,WVY,I,Interconnection,18000.0
