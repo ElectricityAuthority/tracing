@@ -1,27 +1,27 @@
 # Flow tracing of electricity in New Zealand
 
-This repository contains code to run the power flow tracing routine that is used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM) as published by the Authority in an options paper on 16 June 2015.
+This repository contains:
+  - code to run the power flow tracing routine that was used as part of the Electricity Authority's proposed Transmission Pricing Methodology (TPM) as published by the Authority in an options paper on 16 June 2015,
+  - updated code to now trace historic vSPD branch flow output.
 
 Transmission asset usage can be determined using power flow tracing and is being used here as an example of the Market Design of a Transmission Pricing Methodology.  It is used to distinguish between assets that are used by many (called interconnection assets) and assets that are used or shared among only a few (currently called "deep" connection assets).
 
 **NOTE: this is currently still a live repository.**
+**Test cases currently not working with new code base.**
 
 ## Update:
 
-A new branch has been added called vSPD_output - this branch is currently making a few changes to the code base, including adding command line arguments and also the ability to be able to trace daily vSPD output data due to industry requesting this requirement.  Eventually this branch will become the master branch.  For those interested, please checkout this branch.
-```
-git checkout vSPD_output
-```
+vSPD_output merged with master branch, testing on-going, vSPD test case with input files for single day still todo. 
 
-The current TPM trace results use the code base that has been tagged at v0.1.  
+Note: TPM trace results used in the 16 June, TPM have been tagged at v0.1.  
 To use this version, checkout the tag,
 ```
 git checkout v0.1
 ```
 
-### The vSPD_output branch
+### Command line operation
 
-With this branch checked out, the current trace.py help message reads:
+The current trace.py help message reads:
 
 ```
 ./trace.py --help     
@@ -51,11 +51,11 @@ and,
 ```
 should run the simple 3 and 4 bus test systems saving the results, for inspection, into the output directorys of the test names.
 ```
-./trace.py -type=tpm --tp -s=2011-01-01 -e=2013-12-31  
+./trace.py -type=tpm --tp -s=20110101 -e=20131231  
 ```
 should run the Concept Consulting trace run over the three years of data saving data for each trading period (only do this if you have lots od disk space!)  
 ```
-./trace.py -type=vspd -s=2014-01-01 
+./trace.py -type=vspd -s=20140101 
 ```
 runs the trace on vSPD output data for the 1st January, 2014.
 
